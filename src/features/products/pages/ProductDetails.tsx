@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
 import styles from '../styles/productDetails.module.css';
 import { useEffect } from 'react';
+import useShoppingCart from '../../../hooks/useShoppingCart';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function ProductDetails() {
     productDeleteLoading,
   } = useProductDetails(id!);
   const navigate = useNavigate();
+  const { addToShoppingCart } = useShoppingCart();
 
   useEffect(() => {
     if (!productDetailsLoading && !productDetails) {
@@ -40,7 +42,17 @@ export default function ProductDetails() {
   };
 
   const handleBack = () => {
-    navigate('../');
+    navigate('/');
+  };
+
+  const handleAddToCart = () => {
+    if (productDetails) {
+      addToShoppingCart(productDetails);
+    } else {
+      alert(
+        'An error occured while trying to add the item to the shopping cart!',
+      );
+    }
   };
 
   return (
@@ -64,6 +76,7 @@ export default function ProductDetails() {
                       BACK
                     </button>
                     <button>EDIT</button>
+                    <button onClick={handleAddToCart}>ADD TO CART</button>
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}
