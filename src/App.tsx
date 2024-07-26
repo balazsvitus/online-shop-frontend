@@ -1,19 +1,26 @@
 import './App.css';
 import Products from './features/products/pages/Products';
 import ProductDetails from './features/products/pages/ProductDetails';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Redirect from './components/Redirect';
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from 'react-router-dom';
 import ShoppingCart from './features/shoppingCart/pages/ShoppingCart';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Redirect to="/products" />} />
+        <Route path="/" element={<Navigate to="/products" replace={true} />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route
+          path="/products/:productId/:locationId"
+          element={<ProductDetails />}
+        />
         <Route path="/cart" element={<ShoppingCart />} />
-        <Route path="*" element={<Redirect to="/products" />} />
+        <Route path="*" element={<Navigate to="/products" replace={true} />} />
       </Routes>
     </Router>
   );

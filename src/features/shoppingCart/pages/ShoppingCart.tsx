@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/shoppingCart.module.css';
+import styles from '../styles/shopping-cart.module.css';
 import useShoppingCart from '../../../hooks/useShoppingCart';
 import ShoppingCartItem from '../components/ShoppingCartItem';
 
@@ -12,6 +12,10 @@ export default function ShoppingCart() {
     navigate('/');
   };
 
+  const handleCheckout = () => {
+    alert('Checkout');
+  };
+
   return (
     <div className={`${styles.centerShoppingCartContainer}`}>
       <div className={`${styles.shoppingCartContainer}`}>
@@ -21,7 +25,7 @@ export default function ShoppingCart() {
             <button className={styles.backButton} onClick={handleBack}>
               BACK
             </button>
-            <button>CHECKOUT</button>
+            <button onClick={handleCheckout}>CHECKOUT</button>
           </div>
         </div>
         {loading ? (
@@ -40,9 +44,12 @@ export default function ShoppingCart() {
             <tbody>
               {shoppingCart.map((shoppingCartItem) => (
                 <ShoppingCartItem
+                  key={
+                    shoppingCartItem.product.product.id +
+                    shoppingCartItem.product.location.id
+                  }
                   shoppingCartItem={shoppingCartItem}
                   removeFromShoppingCart={removeFromShoppingCart}
-                  key={shoppingCartItem.product.id}
                 />
               ))}
             </tbody>

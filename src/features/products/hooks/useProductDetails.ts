@@ -1,13 +1,16 @@
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
-import { ProductDetailType } from '../../../types/ProductDetail';
 import { NavigateFunction } from 'react-router-dom';
+import { Stock } from '../../../types/Stock';
 
-export default function useProductDetails(id: string) {
+export default function useProductDetails(
+  productId: string,
+  locationId: string,
+) {
   const axiosInstance = useAxiosInstance();
 
-  const [productDetails, setProductDetails] = useState<ProductDetailType>();
+  const [productDetails, setProductDetails] = useState<Stock>();
   const [productDetailsLoading, setProductDetailsLoading] =
     useState<boolean>(true);
 
@@ -17,7 +20,9 @@ export default function useProductDetails(id: string) {
 
   useEffect(() => {
     setProductDetailsLoading(true);
-    const response = axiosInstance.get<ProductDetailType>(`/products/${id}`);
+    const response = axiosInstance.get<Stock>(
+      `/stocks/${productId}/${locationId}`,
+    );
     response
       .then((resp) => {
         setProductDetails(resp.data);
@@ -29,17 +34,16 @@ export default function useProductDetails(id: string) {
       .finally(() => {
         setProductDetailsLoading(false);
       });
-  }, [axiosInstance, id]);
+  }, [axiosInstance, locationId, productId]);
 
   const deleteProduct = useCallback(
     async (navigate: NavigateFunction) => {
       setProductDeleteLoading(true);
       try {
-        await axiosInstance.delete(`/products/${id}`);
+        await axiosInstance.delete(`/products/${productId}`);
         navigate('../');
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.log(axiosError);
         setProductDeleteError(
           (axiosError.response?.data as { message: string }).message ||
             axiosError.message,
@@ -49,7 +53,7 @@ export default function useProductDetails(id: string) {
         setProductDeleteLoading(false);
       }
     },
-    [axiosInstance, id],
+    [axiosInstance, productId],
   );
 
   return {

@@ -21,7 +21,7 @@ export default function Products() {
             <button>ADD</button>
           </div>
         </div>
-        {productsLoading ? (
+        {productsLoading || products.length === 0 ? (
           <p>Loading products...</p>
         ) : (
           <table>
@@ -30,12 +30,16 @@ export default function Products() {
                 <th scope="col">Category</th>
                 <th scope="col">Product Name</th>
                 <th scope="col">Price</th>
+                <th scope="col">Location</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <ProductsTableItem product={product} key={product.id} />
+              {products.map((stock) => (
+                <ProductsTableItem
+                  key={stock.product.id + stock.location.id}
+                  stock={stock}
+                />
               ))}
             </tbody>
           </table>

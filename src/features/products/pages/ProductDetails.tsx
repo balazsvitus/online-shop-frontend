@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import useShoppingCart from '../../../hooks/useShoppingCart';
 
 export default function ProductDetails() {
-  const { id } = useParams();
+  const { productId, locationId } = useParams();
   const {
     productDetails,
     productDetailsLoading,
     deleteProduct,
     productDeleteError,
     productDeleteLoading,
-  } = useProductDetails(id!);
+  } = useProductDetails(productId!, locationId!);
   const navigate = useNavigate();
   const { addToShoppingCart } = useShoppingCart();
 
@@ -33,7 +33,7 @@ export default function ProductDetails() {
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {
       const result = confirm(
-        `Do you really want to delete ${productDetails?.name}?`,
+        `Do you really want to delete ${productDetails?.product.name}?`,
       );
       if (result) {
         deleteProduct(navigate);
@@ -70,7 +70,7 @@ export default function ProductDetails() {
             <>
               <div className={`${styles.detailsContainer}`}>
                 <div className={`${styles.topRow}`}>
-                  <h1>{`Product: ${productDetails?.name}`}</h1>
+                  <h1>{`Product: ${productDetails?.product.name}`}</h1>
                   <div className={`${styles.topRowButtons}`}>
                     <button className={styles.backButton} onClick={handleBack}>
                       BACK
@@ -89,19 +89,20 @@ export default function ProductDetails() {
 
                 <div className={`${styles.detailsSeparated}`}>
                   <div className={`${styles.detailsSeparatedLeft}`}>
-                    <p>{`Name: ${productDetails?.name}`}</p>
-                    <p>{`Category: ${productDetails?.category.name}`}</p>
-                    <p>{`Price: ${productDetails?.price} RON`}</p>
+                    <p>{`Name: ${productDetails?.product.name}`}</p>
+                    <p>{`Category: ${productDetails?.product.category.name}`}</p>
+                    <p>{`Price: ${productDetails?.product.price} RON`}</p>
                   </div>
                   <div className={`${styles.detailsSeparatedRight}`}>
                     <img
-                      src={productDetails?.imageUrl}
+                      className={styles.detailsImage}
+                      src={productDetails?.product.imageUrl}
                       alt="Image of the product"
                     />
                   </div>
                 </div>
                 <div className={`${styles.description}`}>
-                  <p>{`Description: ${productDetails?.description}`}</p>
+                  <p>{`Description: ${productDetails?.product.description}`}</p>
                 </div>
               </div>
             </>
@@ -110,21 +111,4 @@ export default function ProductDetails() {
       )}
     </div>
   );
-}
-
-{
-  /* {productDetailsLoading ? (
-      <p>Loading product details...</p>
-    ) : (
-      <div className="details">
-        <div>{productDetails?.id}</div>
-        <div>{productDetails?.name}</div>
-        <div>{productDetails?.description}</div>
-        <div>{productDetails?.price} RON</div>
-        <div>{productDetails?.weight} KG</div>
-        <div>{productDetails?.supplier}</div>
-        <div>{productDetails?.imageUrl}</div>
-        <div>{productDetails?.category.name}</div>
-      </div>
-    )} */
 }

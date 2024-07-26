@@ -50,3 +50,8 @@ button {
   align-items: center;
   width: 30%;
 }
+
+.detailsImage {
+  max-width: 300px;
+  max-height: 300px;
+}

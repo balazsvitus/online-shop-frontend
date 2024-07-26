@@ -1,11 +1,11 @@
 import { createContext, useState } from 'react';
-import { ProductDetailType } from '../types/ProductDetail';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
+import { Stock } from '../types/Stock';
 
 type ShoppingCartContextType = {
   shoppingCart: ShoppingCartItemType[];
-  addToShoppingCart: (product: ProductDetailType) => void;
-  removeFromShoppingCart: (product: ProductDetailType) => void;
+  addToShoppingCart: (stock: Stock) => void;
+  removeFromShoppingCart: (stock: Stock) => void;
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContextType);
@@ -17,32 +17,45 @@ type ShoppingCartProviderProps = {
 export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
   const [shoppingCart, setShoppingCart] = useState<ShoppingCartItemType[]>([]);
 
-  const addToShoppingCart = (product: ProductDetailType) => {
+  const addToShoppingCart = (stock: Stock) => {
     const tempCart = shoppingCart;
-    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
+    const tempCartItem = tempCart.find(
+      (t) =>
+        t.product.product.id === stock.product.id &&
+        t.product.location.id === stock.location.id,
+    );
     if (tempCartItem) {
       tempCartItem.quantity += 1;
     } else {
       tempCart.push({
-        product,
+        product: stock,
         quantity: 1,
       });
     }
     setShoppingCart(tempCart);
-    alert(`${product.name} successfully added to the shopping cart!`);
+    alert(`${stock.product.name} successfully added to the shopping cart!`);
   };
 
-  const removeFromShoppingCart = (product: ProductDetailType) => {
+  const removeFromShoppingCart = (stock: Stock) => {
+    if (shoppingCart.length === 0) return;
+
     const tempCart = shoppingCart;
-    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
+    const tempCartItem = tempCart.find(
+      (t) =>
+        t.product.product.id === stock.product.id &&
+        t.product.location.id === stock.location.id,
+    );
     if (tempCartItem) {
       if (tempCartItem.quantity > 1) {
         tempCartItem.quantity -= 1;
       } else {
-        delete tempCart[tempCart.indexOf(tempCartItem!)];
+        const index = tempCart.indexOf(tempCartItem);
+        tempCart.splice(index, 1);
       }
       setShoppingCart(tempCart);
-      alert(`${product.name} successfully removed from the shopping cart!`);
+      alert(
+        `${stock.product.name} successfully removed from the shopping cart!`,
+      );
     }
   };
 

@@ -1,29 +1,36 @@
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
-import { ProductDetailType } from '../../../types/ProductDetail';
+import { Stock } from '../../../types/Stock';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
 
-  const [products, setProducts] = useState<ProductDetailType[]>([]);
+  const [products, setProducts] = useState<Stock[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
 
+  const hasFetchedProducts = useRef(false);
+
   useEffect(() => {
-    setProductsLoading(true);
-    const response = axiosInstance.get<ProductDetailType[]>(`/products`);
-    response
-      .then((resp) => {
-        setProducts(resp.data);
-      })
-      .catch((error) => {
+    const fetchProducts = async () => {
+      setProductsLoading(true);
+      try {
+        const stocks = await axiosInstance.get<Stock[]>('/stocks');
+        setProducts(stocks.data);
+      } catch (error) {
+        setProducts([]);
         const axiosError = error as AxiosError;
         throw new Error(axiosError.message);
-      })
-      .finally(() => {
+      } finally {
         setProductsLoading(false);
-      });
-  }, [axiosInstance]);
+      }
+    };
+
+    if (!hasFetchedProducts.current) {
+      fetchProducts();
+      hasFetchedProducts.current = true;
+    }
+  }, [axiosInstance, setProducts, setProductsLoading]);
 
   return { products, productsLoading };
 }
