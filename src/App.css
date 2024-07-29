@@ -22,3 +22,21 @@ select {
   padding: 5px;
   user-select: none;
 }
+
+.center-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-container {
+  width: 80vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

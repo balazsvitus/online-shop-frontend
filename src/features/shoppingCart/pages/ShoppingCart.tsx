@@ -29,9 +29,9 @@ export default function ShoppingCart() {
   };
 
   return (
-    <div className={`${styles.centerShoppingCartContainer}`}>
-      <div className={`${styles.shoppingCartContainer}`}>
-        <div className={`${styles.topRow}`}>
+    <div className="center-table-container">
+      <div className="table-container">
+        <div className="top-row">
           <h1>Shopping cart</h1>
           <div className={`${styles.topRowButtons}`}>
             <button className={styles.backButton} onClick={handleBack}>

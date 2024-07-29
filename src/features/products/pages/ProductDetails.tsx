@@ -59,7 +59,7 @@ export default function ProductDetails() {
 
   return (
     <div
-      className={`${styles.centerDetailsContainer}`}
+      className="center-table-container"
       style={productDetailsLoading ? { height: '100dvh' } : {}}
     >
       {productDetailsLoading ? (
@@ -70,8 +70,8 @@ export default function ProductDetails() {
             <p>The product cannot be found. Redirecting...</p>
           ) : (
             <>
-              <div className={`${styles.detailsContainer}`}>
-                <div className={`${styles.topRow}`}>
+              <div className="table-container">
+                <div className="top-row">
                   <h1>{`Product: ${productDetails?.name}`}</h1>
                   <div className={`${styles.topRowButtons}`}>
                     <button className={styles.backButton} onClick={handleBack}>

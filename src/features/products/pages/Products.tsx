@@ -12,9 +12,9 @@ export default function Products() {
   };
 
   return (
-    <div className={`${styles.centerTableContainer}`}>
-      <div className={`${styles.tableContainer}`}>
-        <div className={`${styles.topRow}`}>
+    <div className="center-table-container">
+      <div className="table-container">
+        <div className="top-row">
           <h1>Products</h1>
           <div className={`${styles.topRowButtons}`}>
             <button onClick={handleNavigateCart}>CART</button>
