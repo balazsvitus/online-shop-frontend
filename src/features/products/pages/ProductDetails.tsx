@@ -32,7 +32,7 @@ export default function ProductDetails() {
       console.log('from fetch');
       fetchProductDetails(navigateToProducts);
     }
-  }, [fetchProductDetails, navigate, product, setProductFromState]);
+  }, [fetchProductDetails, navigate, product]);
 
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {
