@@ -38,3 +38,11 @@ button {
 .locationSelect {
   width: fit-content;
 }
+
+.noItemsInCart {
+  margin-top: 0;
+  border: 2px solid black;
+  border-top: 0;
+  padding: 20px 5px 20px 5px;
+  text-align: center;
+}

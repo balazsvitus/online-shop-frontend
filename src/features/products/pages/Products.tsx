@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import ProductsTableItem from '../components/ProductsTableItem';
 import useProducts from '../hooks/useProducts';
-import styles from '../styles/products.module.css';
+import styles from '../styles/Products.module.css';
 
 export default function Products() {
   const { products, productsLoading } = useProducts();

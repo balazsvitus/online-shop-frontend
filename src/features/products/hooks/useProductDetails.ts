@@ -1,8 +1,9 @@
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
 import { NavigateFunction } from 'react-router-dom';
 import { ProductDetailType } from '../../../types/ProductDetail';
+import API_URLS from '../../../lib/apiUrls';
 
 export default function useProductDetails(productId: string) {
   const axiosInstance = useAxiosInstance();
@@ -13,39 +14,45 @@ export default function useProductDetails(productId: string) {
 
   const [productDeleteLoading, setProductDeleteLoading] =
     useState<boolean>(false);
-  const [productDeleteError, setProductDeleteError] = useState<string>('');
 
-  useEffect(() => {
-    setProductDetailsLoading(true);
-    const response = axiosInstance.get<ProductDetailType>(
-      `/products/${productId}`,
-    );
-    response
-      .then((resp) => {
-        setProductDetails(resp.data);
-      })
-      .catch((error) => {
+  const fetchProductDetails = useCallback(
+    async (navigateToProducts: () => void) => {
+      try {
+        setProductDetailsLoading(true);
+        const response = await axiosInstance.get<ProductDetailType>(
+          `${API_URLS.PRODUCTS}/${productId}`,
+        );
+        setProductDetails(response.data);
+      } catch (error) {
         const axiosError = error as AxiosError;
-        throw new Error(axiosError.message);
-      })
-      .finally(() => {
+        console.error(axiosError.message);
+        navigateToProducts();
+      } finally {
         setProductDetailsLoading(false);
-      });
-  }, [axiosInstance, productId]);
+      }
+    },
+    [axiosInstance, productId],
+  );
+
+  const setProductFromState = (product: ProductDetailType) => {
+    setProductDetails(product);
+    setProductDetailsLoading(false);
+  };
 
   const deleteProduct = useCallback(
     async (navigate: NavigateFunction) => {
-      setProductDeleteLoading(true);
       try {
-        await axiosInstance.delete(`/products/${productId}`);
+        setProductDeleteLoading(true);
+        await axiosInstance.delete(`${API_URLS.PRODUCTS}/${productId}`);
         navigate('../');
       } catch (error) {
         const axiosError = error as AxiosError;
-        setProductDeleteError(
+        const deleteError =
           (axiosError.response?.data as { message: string }).message ||
-            axiosError.message,
+          axiosError.message;
+        alert(
+          `An error occured while performing the delete operation: ${deleteError}`,
         );
-        throw axiosError.message;
       } finally {
         setProductDeleteLoading(false);
       }
@@ -54,10 +61,11 @@ export default function useProductDetails(productId: string) {
   );
 
   return {
+    fetchProductDetails,
     productDetails,
     productDetailsLoading,
     deleteProduct,
     productDeleteLoading,
-    productDeleteError,
+    setProductFromState,
   };
 }

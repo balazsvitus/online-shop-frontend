@@ -1,6 +1,6 @@
 import { ProductDetailType } from '../../../types/ProductDetail';
 import { ShoppingCartItemType } from '../../../types/ShoppingCart';
-import styles from '../styles/shopping-cart.module.css';
+import styles from '../styles/ShoppingCart.module.css';
 
 type ShoppingCartItemProps = {
   shoppingCartItem: ShoppingCartItemType;

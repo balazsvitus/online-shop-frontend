@@ -1,34 +1,38 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
-import styles from '../styles/productDetails.module.css';
+import styles from '../styles/ProductDetails.module.css';
 import { useEffect } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 
 export default function ProductDetails() {
   const { productId } = useParams();
   const {
+    fetchProductDetails,
     productDetails,
     productDetailsLoading,
     deleteProduct,
-    productDeleteError,
     productDeleteLoading,
+    setProductFromState,
   } = useProductDetails(productId!);
   const navigate = useNavigate();
   const { addToShoppingCart } = useShoppingCartContext();
 
-  useEffect(() => {
-    if (!productDetailsLoading && !productDetails) {
-      navigate('/products', { replace: true });
-    }
-  }, [navigate, productDetails, productDetailsLoading]);
+  const location = useLocation();
+  const { product } = location.state || {};
 
   useEffect(() => {
-    if (productDeleteError) {
-      alert(
-        `An error occured while performing the delete operation: ${productDeleteError}`,
-      );
+    const navigateToProducts = () => {
+      navigate('/products', { replace: true });
+    };
+
+    if (product) {
+      console.log('from state');
+      setProductFromState(product);
+    } else {
+      console.log('from fetch');
+      fetchProductDetails(navigateToProducts);
     }
-  }, [productDeleteError]);
+  }, [fetchProductDetails, navigate, product, setProductFromState]);
 
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {

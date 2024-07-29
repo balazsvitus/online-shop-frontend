@@ -8,6 +8,7 @@ import {
   Routes,
 } from 'react-router-dom';
 import ShoppingCart from './features/shoppingCart/pages/ShoppingCart';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:productId" element={<ProductDetails />} />
         <Route path="/cart" element={<ShoppingCart />} />
-        <Route path="*" element={<Navigate to="/products" replace={true} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
