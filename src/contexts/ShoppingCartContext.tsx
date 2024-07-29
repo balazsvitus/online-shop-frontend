@@ -1,11 +1,12 @@
 import { createContext, useState } from 'react';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
-import { Stock } from '../types/Stock';
+import { ProductDetailType } from '../types/ProductDetail';
 
 type ShoppingCartContextType = {
   shoppingCart: ShoppingCartItemType[];
-  addToShoppingCart: (stock: Stock) => void;
-  removeFromShoppingCart: (stock: Stock) => void;
+  addToShoppingCart: (product: ProductDetailType) => void;
+  removeFromShoppingCart: (product: ProductDetailType) => void;
+  emptyShoppingCart: () => void;
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContextType);
@@ -17,34 +18,26 @@ type ShoppingCartProviderProps = {
 export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
   const [shoppingCart, setShoppingCart] = useState<ShoppingCartItemType[]>([]);
 
-  const addToShoppingCart = (stock: Stock) => {
-    const tempCart = shoppingCart;
-    const tempCartItem = tempCart.find(
-      (t) =>
-        t.product.product.id === stock.product.id &&
-        t.product.location.id === stock.location.id,
-    );
+  const addToShoppingCart = (product: ProductDetailType) => {
+    const tempCart = [...shoppingCart];
+    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
     if (tempCartItem) {
       tempCartItem.quantity += 1;
     } else {
       tempCart.push({
-        product: stock,
+        product,
         quantity: 1,
       });
     }
     setShoppingCart(tempCart);
-    alert(`${stock.product.name} successfully added to the shopping cart!`);
+    alert(`${product.name} successfully added to the shopping cart!`);
   };
 
-  const removeFromShoppingCart = (stock: Stock) => {
+  const removeFromShoppingCart = (product: ProductDetailType) => {
     if (shoppingCart.length === 0) return;
 
-    const tempCart = shoppingCart;
-    const tempCartItem = tempCart.find(
-      (t) =>
-        t.product.product.id === stock.product.id &&
-        t.product.location.id === stock.location.id,
-    );
+    const tempCart = [...shoppingCart];
+    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
     if (tempCartItem) {
       if (tempCartItem.quantity > 1) {
         tempCartItem.quantity -= 1;
@@ -53,15 +46,22 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         tempCart.splice(index, 1);
       }
       setShoppingCart(tempCart);
-      alert(
-        `${stock.product.name} successfully removed from the shopping cart!`,
-      );
+      alert(`${product.name} successfully removed from the shopping cart!`);
     }
+  };
+
+  const emptyShoppingCart = () => {
+    setShoppingCart([]);
   };
 
   return (
     <ShoppingCartContext.Provider
-      value={{ shoppingCart, addToShoppingCart, removeFromShoppingCart }}
+      value={{
+        shoppingCart,
+        addToShoppingCart,
+        removeFromShoppingCart,
+        emptyShoppingCart,
+      }}
     >
       {children}
     </ShoppingCartContext.Provider>

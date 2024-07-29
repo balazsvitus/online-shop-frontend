@@ -1,27 +1,26 @@
 import { useNavigate } from 'react-router-dom';
-import { Stock } from '../../../types/Stock';
 import styles from '../styles/products.module.css';
+import { ProductDetailType } from '../../../types/ProductDetail';
 
 type ProductsTableItemProps = {
-  stock: Stock;
+  product: ProductDetailType;
 };
 
-export default function ProductsTableItem({ stock }: ProductsTableItemProps) {
+export default function ProductsTableItem({ product }: ProductsTableItemProps) {
   const navigate = useNavigate();
 
-  const handleNavigate = (productId: string, locationId: string) => {
-    navigate(`${productId}/${locationId}`);
+  const handleNavigate = (productId: string) => {
+    navigate(`${productId}`);
   };
 
   return (
     <tr>
-      <td>{stock.product.category.name}</td>
-      <td>{stock.product.name}</td>
-      <td>{stock.product.price} RON</td>
-      <td>{stock.location.name}</td>
+      <td>{product.category.name}</td>
+      <td>{product.name}</td>
+      <td>{product.price} RON</td>
       <td
         className={`${styles.rowNavigationButton}`}
-        onClick={() => handleNavigate(stock.product.id, stock.location.id)}
+        onClick={() => handleNavigate(product.id)}
       >
         {'>'}
       </td>

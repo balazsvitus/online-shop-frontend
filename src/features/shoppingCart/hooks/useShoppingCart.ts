@@ -1,24 +1,32 @@
-// import { useCallback, useState } from 'react';
-// import useAxiosInstance from '../../../hooks/useAxiosInstance';
-// import { ProductDetailType } from '../../../types/ProductDetail';
+import { useCallback, useState } from 'react';
+import { OrderDTO } from '../../../types/Order';
 
-// export default function useShoppingCart() {
-//   const [checkoutLoading, setCheckOutLoading] = useState<boolean>(false);
-//   const axiosInstance = useAxiosInstance();
+export default function useShoppingCart() {
+  const [checkoutLoading, setCheckOutLoading] = useState<boolean>(false);
 
-//   const checkout = useCallback(async (orderDetails: ProductDetailType) => {
-//     setCheckOutLoading(false);
-//     try {
-//       const response = axiosInstance.post('/orders', {
-//         customer: '33c5965f-e370-43af-8d9a-c877463f31b1',
-//         createdAt: new Date(),
-//         country: 'Romania',
-//         city: 'Cluj-Napoca',
-//         streetAddress: 'Strada Brassai Samuel 5',
-//       });
-//     } catch (error) {
-//     } finally {
-//       setCheckOutLoading(false);
-//     }
-//   }, []);
-// }
+  const checkout = useCallback(
+    async (order: OrderDTO, emptyShoppingCart: () => void) => {
+      setCheckOutLoading(false);
+      try {
+        setCheckOutLoading(true);
+        const response = await fetch('http://localhost:3000/orders', {
+          method: 'POST',
+          body: JSON.stringify(order),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === 200 || response.status === 201) {
+          emptyShoppingCart();
+        }
+      } catch (error) {
+        alert('An error occured while checkout');
+      } finally {
+        setCheckOutLoading(false);
+      }
+    },
+    [],
+  );
+
+  return { checkout, checkoutLoading };
+}

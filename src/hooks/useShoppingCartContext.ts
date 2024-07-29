@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import ShoppingCartContext from '../contexts/ShoppingCartContext';
 
-export default function useShoppingCart() {
+export default function useShoppingCartContext() {
   const context = useContext(ShoppingCartContext);
 
   if (!context) {

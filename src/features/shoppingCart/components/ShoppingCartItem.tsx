@@ -1,25 +1,25 @@
+import { ProductDetailType } from '../../../types/ProductDetail';
 import { ShoppingCartItemType } from '../../../types/ShoppingCart';
-import { Stock } from '../../../types/Stock';
 import styles from '../styles/shopping-cart.module.css';
 
 type ShoppingCartItemProps = {
   shoppingCartItem: ShoppingCartItemType;
-  removeFromShoppingCart: (product: Stock) => void;
+  removeFromShoppingCart: (product: ProductDetailType) => void;
 };
 
 export default function ShoppingCartItem({
   shoppingCartItem,
   removeFromShoppingCart,
 }: ShoppingCartItemProps) {
-  const handleDelete = (product: Stock) => {
+  const handleDelete = (product: ProductDetailType) => {
     removeFromShoppingCart(product);
   };
 
   return (
     <tr>
-      <td>{shoppingCartItem.product.product.category.name}</td>
-      <td>{shoppingCartItem.product.product.name}</td>
-      <td>{shoppingCartItem.product.product.price}</td>
+      <td>{shoppingCartItem.product.category.name}</td>
+      <td>{shoppingCartItem.product.name}</td>
+      <td>{shoppingCartItem.product.price}</td>
       <td>{shoppingCartItem.quantity}</td>
       <td
         className={`${styles.rowDeleteButton}`}

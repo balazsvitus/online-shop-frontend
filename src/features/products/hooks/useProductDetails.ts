@@ -2,15 +2,12 @@ import { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
 import { NavigateFunction } from 'react-router-dom';
-import { Stock } from '../../../types/Stock';
+import { ProductDetailType } from '../../../types/ProductDetail';
 
-export default function useProductDetails(
-  productId: string,
-  locationId: string,
-) {
+export default function useProductDetails(productId: string) {
   const axiosInstance = useAxiosInstance();
 
-  const [productDetails, setProductDetails] = useState<Stock>();
+  const [productDetails, setProductDetails] = useState<ProductDetailType>();
   const [productDetailsLoading, setProductDetailsLoading] =
     useState<boolean>(true);
 
@@ -20,8 +17,8 @@ export default function useProductDetails(
 
   useEffect(() => {
     setProductDetailsLoading(true);
-    const response = axiosInstance.get<Stock>(
-      `/stocks/${productId}/${locationId}`,
+    const response = axiosInstance.get<ProductDetailType>(
+      `/products/${productId}`,
     );
     response
       .then((resp) => {
@@ -34,7 +31,7 @@ export default function useProductDetails(
       .finally(() => {
         setProductDetailsLoading(false);
       });
-  }, [axiosInstance, locationId, productId]);
+  }, [axiosInstance, productId]);
 
   const deleteProduct = useCallback(
     async (navigate: NavigateFunction) => {

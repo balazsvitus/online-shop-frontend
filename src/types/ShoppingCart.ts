@@ -1,6 +1,6 @@
-import { Stock } from './Stock';
+import { ProductDetailType } from './ProductDetail';
 
 export type ShoppingCartItemType = {
-  product: Stock;
+  product: ProductDetailType;
   quantity: number;
 };

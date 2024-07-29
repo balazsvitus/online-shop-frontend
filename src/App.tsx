@@ -15,10 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/products" replace={true} />} />
         <Route path="/products" element={<Products />} />
-        <Route
-          path="/products/:productId/:locationId"
-          element={<ProductDetails />}
-        />
+        <Route path="/products/:productId" element={<ProductDetails />} />
         <Route path="/cart" element={<ShoppingCart />} />
         <Route path="*" element={<Navigate to="/products" replace={true} />} />
       </Routes>

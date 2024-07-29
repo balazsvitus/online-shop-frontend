@@ -34,3 +34,7 @@ button {
   font-weight: 700;
   text-align: center;
 }
+
+.locationSelect {
+  width: fit-content;
+}

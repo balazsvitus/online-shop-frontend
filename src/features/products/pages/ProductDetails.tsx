@@ -2,19 +2,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
 import styles from '../styles/productDetails.module.css';
 import { useEffect } from 'react';
-import useShoppingCart from '../../../hooks/useShoppingCart';
+import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 
 export default function ProductDetails() {
-  const { productId, locationId } = useParams();
+  const { productId } = useParams();
   const {
     productDetails,
     productDetailsLoading,
     deleteProduct,
     productDeleteError,
     productDeleteLoading,
-  } = useProductDetails(productId!, locationId!);
+  } = useProductDetails(productId!);
   const navigate = useNavigate();
-  const { addToShoppingCart } = useShoppingCart();
+  const { addToShoppingCart } = useShoppingCartContext();
 
   useEffect(() => {
     if (!productDetailsLoading && !productDetails) {
@@ -33,7 +33,7 @@ export default function ProductDetails() {
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {
       const result = confirm(
-        `Do you really want to delete ${productDetails?.product.name}?`,
+        `Do you really want to delete ${productDetails?.name}?`,
       );
       if (result) {
         deleteProduct(navigate);
@@ -70,7 +70,7 @@ export default function ProductDetails() {
             <>
               <div className={`${styles.detailsContainer}`}>
                 <div className={`${styles.topRow}`}>
-                  <h1>{`Product: ${productDetails?.product.name}`}</h1>
+                  <h1>{`Product: ${productDetails?.name}`}</h1>
                   <div className={`${styles.topRowButtons}`}>
                     <button className={styles.backButton} onClick={handleBack}>
                       BACK
@@ -89,20 +89,20 @@ export default function ProductDetails() {
 
                 <div className={`${styles.detailsSeparated}`}>
                   <div className={`${styles.detailsSeparatedLeft}`}>
-                    <p>{`Name: ${productDetails?.product.name}`}</p>
-                    <p>{`Category: ${productDetails?.product.category.name}`}</p>
-                    <p>{`Price: ${productDetails?.product.price} RON`}</p>
+                    <p>{`Name: ${productDetails?.name}`}</p>
+                    <p>{`Category: ${productDetails?.category.name}`}</p>
+                    <p>{`Price: ${productDetails?.price} RON`}</p>
                   </div>
                   <div className={`${styles.detailsSeparatedRight}`}>
                     <img
                       className={styles.detailsImage}
-                      src={productDetails?.product.imageUrl}
+                      src={productDetails?.imageUrl}
                       alt="Image of the product"
                     />
                   </div>
                 </div>
                 <div className={`${styles.description}`}>
-                  <p>{`Description: ${productDetails?.product.description}`}</p>
+                  <p>{`Description: ${productDetails?.description}`}</p>
                 </div>
               </div>
             </>

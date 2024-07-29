@@ -1,12 +1,12 @@
 import { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
-import { Stock } from '../../../types/Stock';
+import { ProductDetailType } from '../../../types/ProductDetail';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
 
-  const [products, setProducts] = useState<Stock[]>([]);
+  const [products, setProducts] = useState<ProductDetailType[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
 
   const hasFetchedProducts = useRef(false);
@@ -15,8 +15,10 @@ export default function useProducts() {
     const fetchProducts = async () => {
       setProductsLoading(true);
       try {
-        const stocks = await axiosInstance.get<Stock[]>('/stocks');
-        setProducts(stocks.data);
+        const products = await axiosInstance.get<ProductDetailType[]>(
+          '/products',
+        );
+        setProducts(products.data);
       } catch (error) {
         setProducts([]);
         const axiosError = error as AxiosError;
