@@ -35,7 +35,6 @@ export default function useProductDetails(productId: string) {
   );
 
   const setProductFromState = (product: ProductDetailType) => {
-    console.log('fuck this');
     setProductDetails(product);
     setProductDetailsLoading(false);
   };

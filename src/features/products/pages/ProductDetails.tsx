@@ -26,10 +26,8 @@ export default function ProductDetails() {
     };
 
     if (product) {
-      console.log('from state');
       setProductFromState(product);
     } else {
-      console.log('from fetch');
       fetchProductDetails(navigateToProducts);
     }
   }, [fetchProductDetails, navigate, product]);
