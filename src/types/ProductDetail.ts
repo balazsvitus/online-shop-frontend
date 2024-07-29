@@ -14,3 +14,13 @@ export type ProductDetailType = {
   imageUrl: string;
   category: ProductCategoryType;
 };
+
+export type ProductDTO = {
+  name: string;
+  description: string;
+  price: number;
+  weight: number;
+  supplier: string;
+  imageUrl: string;
+  category: string;
+};

@@ -16,7 +16,7 @@ export default function useShoppingCart() {
             'Content-Type': 'application/json',
           },
         });
-        if (response.status === 200 || response.status === 201) {
+        if (response.ok) {
           emptyShoppingCart();
         }
       } catch (error) {

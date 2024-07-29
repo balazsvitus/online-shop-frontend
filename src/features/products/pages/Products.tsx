@@ -1,15 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ProductsTableItem from '../components/ProductsTableItem';
 import useProducts from '../hooks/useProducts';
 import styles from '../styles/products.module.css';
+import { useEffect } from 'react';
 
 export default function Products() {
-  const { products, productsLoading } = useProducts();
-  const navigate = useNavigate();
+  const { fetchProducts, products, productsLoading } = useProducts();
 
-  const handleNavigateCart = () => {
-    navigate('/cart');
-  };
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <div className={`${styles.centerTableContainer}`}>
@@ -17,8 +17,12 @@ export default function Products() {
         <div className={`${styles.topRow}`}>
           <h1>Products</h1>
           <div className={`${styles.topRowButtons}`}>
-            <button onClick={handleNavigateCart}>CART</button>
-            <button>ADD</button>
+            <Link to="/cart">
+              <button>CART</button>
+            </Link>
+            <Link to="/add-product">
+              <button>ADD</button>
+            </Link>
           </div>
         </div>
         {productsLoading || products.length === 0 ? (
