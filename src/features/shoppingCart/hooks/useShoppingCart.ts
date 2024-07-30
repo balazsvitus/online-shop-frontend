@@ -5,7 +5,7 @@ import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function useShoppingCart() {
   const [checkoutLoading, setCheckOutLoading] = useState<boolean>(false);
-  const { authData } = useAuthContext();
+  const { authData, logout } = useAuthContext();
 
   const checkout = useCallback(
     async (order: OrderDTO, emptyShoppingCart: () => void) => {
@@ -22,6 +22,8 @@ export default function useShoppingCart() {
         });
         if (response.ok) {
           emptyShoppingCart();
+        } else if (response.status === 401) {
+          logout();
         }
       } catch (error) {
         alert('An error occured while checkout');
@@ -29,7 +31,7 @@ export default function useShoppingCart() {
         setCheckOutLoading(false);
       }
     },
-    [authData.accessToken],
+    [authData.accessToken, logout],
   );
 
   return { checkout, checkoutLoading };

@@ -3,7 +3,7 @@ import axiosInstance from '../lib/axiosInstance';
 import useAuthContext from './useAuthContext';
 
 export default function useAxiosInstance() {
-  const { authData } = useAuthContext();
+  const { authData, logout } = useAuthContext();
 
   useEffect(() => {
     const requestInterceptor = axiosInstance.interceptors.request.use(
@@ -18,10 +18,23 @@ export default function useAxiosInstance() {
       },
     );
 
+    const responseInterceptor = axiosInstance.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      async (error) => {
+        if (error.response?.status === 401) {
+          logout();
+        }
+        return Promise.reject(error);
+      },
+    );
+
     return () => {
       axiosInstance.interceptors.request.eject(requestInterceptor);
+      axiosInstance.interceptors.request.eject(responseInterceptor);
     };
-  }, [authData.accessToken]);
+  }, [authData.accessToken, logout]);
 
   return axiosInstance;
 }

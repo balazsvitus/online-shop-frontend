@@ -9,7 +9,7 @@ export default function useProductCategories() {
   >([]);
   const [productCategoriesLoading, setProductCategoriesLoading] =
     useState<boolean>(true);
-  const { authData } = useAuthContext();
+  const { authData, logout } = useAuthContext();
 
   useEffect(() => {
     const fetchProductCategories = async () => {
@@ -24,8 +24,11 @@ export default function useProductCategories() {
           },
         );
         if (!response.ok) {
+          if (response.status === 401) {
+            logout();
+          }
           throw new Error(
-            'An error occures while fetching product categories!',
+            'An error occured while fetching product categories!',
           );
         }
         const data: ProductCategoryType[] = await response.json();
@@ -38,7 +41,12 @@ export default function useProductCategories() {
     };
 
     fetchProductCategories();
-  }, [authData.accessToken, setProductCategories, setProductCategoriesLoading]);
+  }, [
+    authData.accessToken,
+    logout,
+    setProductCategories,
+    setProductCategoriesLoading,
+  ]);
 
   return {
     productCategories,

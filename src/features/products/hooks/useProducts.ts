@@ -7,7 +7,7 @@ import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
-  const { authData } = useAuthContext();
+  const { authData, logout } = useAuthContext();
 
   const [products, setProducts] = useState<ProductDetailType[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -44,6 +44,8 @@ export default function useProducts() {
         });
         if (response.ok) {
           callback();
+        } else if (response.status === 401) {
+          logout();
         }
       } catch (error) {
         console.error(error);
@@ -51,7 +53,7 @@ export default function useProducts() {
         setAddingProduct(false);
       }
     },
-    [authData.accessToken],
+    [authData.accessToken, logout],
   );
 
   const [updatingProduct, setUpdatingProduct] = useState<boolean>(false);
@@ -73,6 +75,8 @@ export default function useProducts() {
         );
         if (response.ok) {
           callback();
+        } else if (response.status === 401) {
+          logout();
         }
       } catch (error) {
         console.error(error);
@@ -80,7 +84,7 @@ export default function useProducts() {
         setUpdatingProduct(false);
       }
     },
-    [authData.accessToken],
+    [authData.accessToken, logout],
   );
 
   return {
