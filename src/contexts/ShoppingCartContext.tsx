@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useMemo, useState } from 'react';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
 import { ProductDetailType } from '../types/ProductDetail';
 
@@ -54,15 +54,19 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     setShoppingCart([]);
   };
 
+  const value = useMemo(
+    () => ({
+      shoppingCart,
+      addToShoppingCart,
+      removeFromShoppingCart,
+      emptyShoppingCart,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [shoppingCart],
+  );
+
   return (
-    <ShoppingCartContext.Provider
-      value={{
-        shoppingCart,
-        addToShoppingCart,
-        removeFromShoppingCart,
-        emptyShoppingCart,
-      }}
-    >
+    <ShoppingCartContext.Provider value={value}>
       {children}
     </ShoppingCartContext.Provider>
   );

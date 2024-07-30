@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { OrderDTO } from '../../../types/Order';
+import API_URLS, { API_BASE_URL } from '../../../lib/apiUrls';
 
 export default function useShoppingCart() {
   const [checkoutLoading, setCheckOutLoading] = useState<boolean>(false);
@@ -9,7 +10,7 @@ export default function useShoppingCart() {
       setCheckOutLoading(false);
       try {
         setCheckOutLoading(true);
-        const response = await fetch('http://localhost:3000/orders', {
+        const response = await fetch(`${API_BASE_URL}${API_URLS.ORDERS}`, {
           method: 'POST',
           body: JSON.stringify(order),
           headers: {
