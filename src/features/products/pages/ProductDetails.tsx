@@ -1,34 +1,37 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useProductDetails from '../hooks/useProductDetails';
-import styles from '../styles/productDetails.module.css';
+import styles from '../styles/ProductDetails.module.css';
 import { useEffect } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 
 export default function ProductDetails() {
   const { productId } = useParams();
   const {
+    fetchProductDetails,
     productDetails,
     productDetailsLoading,
     deleteProduct,
-    productDeleteError,
     productDeleteLoading,
+    setProductFromState,
   } = useProductDetails(productId!);
   const navigate = useNavigate();
   const { addToShoppingCart } = useShoppingCartContext();
 
-  useEffect(() => {
-    if (!productDetailsLoading && !productDetails) {
-      navigate('/products', { replace: true });
-    }
-  }, [navigate, productDetails, productDetailsLoading]);
+  const location = useLocation();
+  const { product } = location.state || {};
 
   useEffect(() => {
-    if (productDeleteError) {
-      alert(
-        `An error occured while performing the delete operation: ${productDeleteError}`,
-      );
+    const navigateToProducts = () => {
+      navigate('/products', { replace: true });
+    };
+
+    if (product) {
+      setProductFromState(product);
+    } else {
+      fetchProductDetails(navigateToProducts);
     }
-  }, [productDeleteError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {
@@ -57,7 +60,7 @@ export default function ProductDetails() {
 
   return (
     <div
-      className={`${styles.centerDetailsContainer}`}
+      className="center-table-container"
       style={productDetailsLoading ? { height: '100dvh' } : {}}
     >
       {productDetailsLoading ? (
@@ -68,8 +71,8 @@ export default function ProductDetails() {
             <p>The product cannot be found. Redirecting...</p>
           ) : (
             <>
-              <div className={`${styles.detailsContainer}`}>
-                <div className={`${styles.topRow}`}>
+              <div className="table-container">
+                <div className="top-row">
                   <h1>{`Product: ${productDetails?.name}`}</h1>
                   <div className={`${styles.topRowButtons}`}>
                     <button className={styles.backButton} onClick={handleBack}>

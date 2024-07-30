@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import ProductsTableItem from '../components/ProductsTableItem';
 import useProducts from '../hooks/useProducts';
-import styles from '../styles/products.module.css';
 import { useEffect } from 'react';
+import styles from '../styles/Products.module.css';
 
 export default function Products() {
   const { fetchProducts, products, productsLoading } = useProducts();
@@ -12,9 +12,9 @@ export default function Products() {
   }, [fetchProducts]);
 
   return (
-    <div className={`${styles.centerTableContainer}`}>
-      <div className={`${styles.tableContainer}`}>
-        <div className={`${styles.topRow}`}>
+    <div className="center-table-container">
+      <div className="table-container">
+        <div className="top-row">
           <h1>Products</h1>
           <div className={`${styles.topRowButtons}`}>
             <Link to="/cart">

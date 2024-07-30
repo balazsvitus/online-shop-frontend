@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/shopping-cart.module.css';
+import styles from '../styles/ShoppingCart.module.css';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 import ShoppingCartItem from '../components/ShoppingCartItem';
 import { ChangeEvent, useState } from 'react';
@@ -29,9 +29,9 @@ export default function ShoppingCart() {
   };
 
   return (
-    <div className={`${styles.centerShoppingCartContainer}`}>
-      <div className={`${styles.shoppingCartContainer}`}>
-        <div className={`${styles.topRow}`}>
+    <div className="center-table-container">
+      <div className="table-container">
+        <div className="top-row">
           <h1>Shopping cart</h1>
           <div className={`${styles.topRowButtons}`}>
             <button className={styles.backButton} onClick={handleBack}>
@@ -65,16 +65,7 @@ export default function ShoppingCart() {
             ))}
           </tbody>
         </table>
-        <h4
-          hidden={shoppingCart.length > 0}
-          style={{
-            marginTop: 0,
-            border: '2px solid black',
-            borderTop: 0,
-            padding: '20px 5px 20px 5px',
-            textAlign: 'center',
-          }}
-        >
+        <h4 hidden={shoppingCart.length > 0} className={styles.noItemsInCart}>
           There are no items in your shopping cart!
         </h4>
         <select

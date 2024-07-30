@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 import { useCallback, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
 import { ProductDetailType, ProductDTO } from '../../../types/ProductDetail';
+import API_URLS from '../../../lib/apiUrls';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
@@ -13,7 +14,7 @@ export default function useProducts() {
     setProductsLoading(true);
     try {
       const products = await axiosInstance.get<ProductDetailType[]>(
-        '/products',
+        `${API_URLS.PRODUCTS}`,
       );
       setProducts(products.data);
     } catch (error) {
