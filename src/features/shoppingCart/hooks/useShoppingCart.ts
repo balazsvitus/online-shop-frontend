@@ -12,10 +12,10 @@ export default function useShoppingCart() {
         setCheckOutLoading(true);
         const response = await fetch(`${API_BASE_URL}${API_URLS.ORDERS}`, {
           method: 'POST',
-          body: JSON.stringify(order),
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify(order),
         });
         if (response.ok) {
           emptyShoppingCart();

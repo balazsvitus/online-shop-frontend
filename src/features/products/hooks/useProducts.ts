@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { useCallback, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
 import { ProductDetailType, ProductDTO } from '../../../types/ProductDetail';
-import API_URLS from '../../../lib/apiUrls';
+import API_URLS, { API_BASE_URL } from '../../../lib/apiUrls';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
@@ -33,7 +33,7 @@ export default function useProducts() {
       setAddingProduct(true);
       try {
         console.log(product);
-        const response = await fetch('http://localhost:3000/products', {
+        const response = await fetch(`${API_BASE_URL}${API_URLS.PRODUCTS}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,6 @@ export default function useProducts() {
         });
         if (response.ok) {
           callback();
-          // navigate to products
         }
       } catch (error) {
         console.error(error);
@@ -53,11 +52,42 @@ export default function useProducts() {
     [setAddingProduct],
   );
 
+  const [updatingProduct, setUpdatingProduct] = useState<boolean>(false);
+
+  const updateProduct = useCallback(
+    async (productId: string, product: ProductDTO, callback: () => void) => {
+      setUpdatingProduct(true);
+      try {
+        console.log(product);
+        const response = await fetch(
+          `${API_BASE_URL}${API_URLS.PRODUCTS}/${productId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
+          },
+        );
+        if (response.ok) {
+          callback();
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setUpdatingProduct(false);
+      }
+    },
+    [setUpdatingProduct],
+  );
+
   return {
     fetchProducts,
     products,
     productsLoading,
     addProduct,
     addingProduct,
+    updateProduct,
+    updatingProduct,
   };
 }

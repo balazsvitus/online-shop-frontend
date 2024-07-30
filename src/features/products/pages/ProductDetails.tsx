@@ -48,6 +48,12 @@ export default function ProductDetails() {
     navigate('/');
   };
 
+  const handleEdit = () => {
+    navigate(`/edit-product/${productId}`, {
+      state: { product: productDetails },
+    });
+  };
+
   const handleAddToCart = () => {
     if (productDetails) {
       addToShoppingCart(productDetails);
@@ -78,7 +84,7 @@ export default function ProductDetails() {
                     <button className={styles.backButton} onClick={handleBack}>
                       BACK
                     </button>
-                    <button>EDIT</button>
+                    <button onClick={handleEdit}>EDIT</button>
                     <button onClick={handleAddToCart}>ADD TO CART</button>
                     <button
                       className={styles.deleteButton}

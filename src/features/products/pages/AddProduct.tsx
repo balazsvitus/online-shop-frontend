@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/productForm.module.css';
+import styles from '../styles/ProductForm.module.css';
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,7 +44,6 @@ export default function AddProduct() {
   };
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    console.log('submit', data);
     addProduct(data, navigateToProducts);
   };
 

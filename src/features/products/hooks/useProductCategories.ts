@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ProductCategoryType } from '../../../types/ProductDetail';
+import API_URLS, { API_BASE_URL } from '../../../lib/apiUrls';
 
 export default function useProductCategories() {
   const [productCategories, setProductCategories] = useState<
@@ -13,7 +14,7 @@ export default function useProductCategories() {
       try {
         setProductCategoriesLoading(true);
         const response = await fetch(
-          'http://localhost:3000/product-categories',
+          `${API_BASE_URL}${API_URLS.PRODUCT_CATEGORIES}`,
         );
         if (!response.ok) {
           throw new Error(
