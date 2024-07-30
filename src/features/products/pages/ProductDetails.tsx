@@ -30,7 +30,8 @@ export default function ProductDetails() {
     } else {
       fetchProductDetails(navigateToProducts);
     }
-  }, [fetchProductDetails, navigate, product]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   const handleDelete = () => {
     if (!productDetailsLoading && !productDeleteLoading) {
