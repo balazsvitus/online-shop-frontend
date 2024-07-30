@@ -3,9 +3,11 @@ import ProductsTableItem from '../components/ProductsTableItem';
 import useProducts from '../hooks/useProducts';
 import { useEffect } from 'react';
 import '../styles/Products.module.css';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function Products() {
   const { fetchProducts, products, productsLoading } = useProducts();
+  const { authData } = useAuthContext();
 
   useEffect(() => {
     fetchProducts();
@@ -21,7 +23,7 @@ export default function Products() {
               <button className="top-row-button">CART</button>
             </Link>
             <Link to="/add-product">
-              <button>ADD</button>
+              <button disabled={authData.role !== 'admin'}>ADD</button>
             </Link>
           </div>
         </div>

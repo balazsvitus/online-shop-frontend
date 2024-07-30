@@ -3,6 +3,7 @@ import useProductDetails from '../hooks/useProductDetails';
 import styles from '../styles/ProductDetails.module.css';
 import { useEffect } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -19,6 +20,7 @@ export default function ProductDetails() {
 
   const location = useLocation();
   const { product } = location.state || {};
+  const { authData } = useAuthContext();
 
   useEffect(() => {
     const navigateToProducts = () => {
@@ -87,7 +89,11 @@ export default function ProductDetails() {
                     >
                       BACK
                     </button>
-                    <button className="top-row-button" onClick={handleEdit}>
+                    <button
+                      className="top-row-button"
+                      onClick={handleEdit}
+                      disabled={authData.role !== 'admin'}
+                    >
                       EDIT
                     </button>
                     <button
@@ -99,7 +105,9 @@ export default function ProductDetails() {
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}
-                      disabled={productDeleteLoading}
+                      disabled={
+                        productDeleteLoading || authData.role !== 'admin'
+                      }
                     >
                       DELETE
                     </button>

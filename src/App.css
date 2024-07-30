@@ -21,6 +21,11 @@ button {
   font-size: 1.1rem;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .top-row-button {
   margin-right: 5px;
 }

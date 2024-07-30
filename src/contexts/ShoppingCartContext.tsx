@@ -1,4 +1,4 @@
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
 import { ProductDetailType } from '../types/ProductDetail';
 
@@ -30,6 +30,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       });
     }
     setShoppingCart(tempCart);
+    localStorage.setItem('cart', JSON.stringify(tempCart));
     alert(`${product.name} successfully added to the shopping cart!`);
   };
 
@@ -46,13 +47,25 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         tempCart.splice(index, 1);
       }
       setShoppingCart(tempCart);
+      localStorage.setItem('cart', JSON.stringify(tempCart));
       alert(`${product.name} successfully removed from the shopping cart!`);
     }
   };
 
   const emptyShoppingCart = () => {
     setShoppingCart([]);
+    localStorage.setItem('cart', JSON.stringify([]));
   };
+
+  useEffect(() => {
+    const cartFromStorage = localStorage.getItem('cart');
+    if (cartFromStorage) {
+      const cart = JSON.parse(cartFromStorage);
+      if (cart) {
+        setShoppingCart(cart);
+      }
+    }
+  }, []);
 
   const value = useMemo(
     () => ({
