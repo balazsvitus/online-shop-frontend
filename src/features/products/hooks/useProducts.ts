@@ -32,7 +32,6 @@ export default function useProducts() {
     async (product: ProductDTO, callback: () => void) => {
       setAddingProduct(true);
       try {
-        console.log(product);
         const response = await fetch(`${API_BASE_URL}${API_URLS.PRODUCTS}`, {
           method: 'POST',
           headers: {
@@ -58,7 +57,6 @@ export default function useProducts() {
     async (productId: string, product: ProductDTO, callback: () => void) => {
       setUpdatingProduct(true);
       try {
-        console.log(product);
         const response = await fetch(
           `${API_BASE_URL}${API_URLS.PRODUCTS}/${productId}`,
           {

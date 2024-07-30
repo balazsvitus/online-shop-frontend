@@ -57,10 +57,8 @@ export default function EditProduct() {
     };
 
     if (product) {
-      console.log('state');
       setProductFromState(product);
     } else {
-      console.log('fetch');
       fetchProductDetails(navigateToProducts);
     }
 
@@ -78,7 +76,6 @@ export default function EditProduct() {
   }, [productDetails, setValue]);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    console.log('submit', data);
     updateProduct(productId!, data, () => {
       navigate(`/products/${productId}`);
     });
@@ -234,7 +231,7 @@ export default function EditProduct() {
                   Cancel
                 </button>
                 <button type="submit" disabled={updatingProduct}>
-                  Submit
+                  Save
                 </button>
               </div>
             </form>
