@@ -27,9 +27,13 @@ export default function useLogin() {
             role: data.role,
             accessToken: data.accessToken,
           });
+        } else {
+          const errorBody = await response.json();
+          throw new Error(errorBody.message);
         }
       } catch (error) {
-        console.error(error);
+        const errorMessage = (error as { message: string }).message;
+        alert(errorMessage);
       } finally {
         setLoginLoading(false);
       }

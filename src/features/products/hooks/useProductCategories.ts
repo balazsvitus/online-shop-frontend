@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ProductCategoryType } from '../../../types/ProductDetail';
 import API_URLS, { API_BASE_URL } from '../../../lib/apiUrls';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function useProductCategories() {
   const [productCategories, setProductCategories] = useState<
@@ -8,6 +9,7 @@ export default function useProductCategories() {
   >([]);
   const [productCategoriesLoading, setProductCategoriesLoading] =
     useState<boolean>(true);
+  const { authData } = useAuthContext();
 
   useEffect(() => {
     const fetchProductCategories = async () => {
@@ -15,6 +17,11 @@ export default function useProductCategories() {
         setProductCategoriesLoading(true);
         const response = await fetch(
           `${API_BASE_URL}${API_URLS.PRODUCT_CATEGORIES}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authData.accessToken}`,
+            },
+          },
         );
         if (!response.ok) {
           throw new Error(
@@ -31,7 +38,7 @@ export default function useProductCategories() {
     };
 
     fetchProductCategories();
-  }, [setProductCategories, setProductCategoriesLoading]);
+  }, [authData.accessToken, setProductCategories, setProductCategoriesLoading]);
 
   return {
     productCategories,

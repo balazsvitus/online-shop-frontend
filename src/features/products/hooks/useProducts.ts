@@ -3,9 +3,11 @@ import { useCallback, useState } from 'react';
 import useAxiosInstance from '../../../hooks/useAxiosInstance';
 import { ProductDetailType, ProductDTO } from '../../../types/ProductDetail';
 import API_URLS, { API_BASE_URL } from '../../../lib/apiUrls';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function useProducts() {
   const axiosInstance = useAxiosInstance();
+  const { authData } = useAuthContext();
 
   const [products, setProducts] = useState<ProductDetailType[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -36,6 +38,7 @@ export default function useProducts() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${authData.accessToken}`,
           },
           body: JSON.stringify(product),
         });
@@ -48,7 +51,7 @@ export default function useProducts() {
         setAddingProduct(false);
       }
     },
-    [setAddingProduct],
+    [authData.accessToken],
   );
 
   const [updatingProduct, setUpdatingProduct] = useState<boolean>(false);
@@ -63,6 +66,7 @@ export default function useProducts() {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${authData.accessToken}`,
             },
             body: JSON.stringify(product),
           },
@@ -76,7 +80,7 @@ export default function useProducts() {
         setUpdatingProduct(false);
       }
     },
-    [setUpdatingProduct],
+    [authData.accessToken],
   );
 
   return {

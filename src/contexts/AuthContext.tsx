@@ -40,7 +40,6 @@ export default function AuthContextProvider({
     if (userFromStorage) {
       const user = JSON.parse(userFromStorage) as UserType;
       if (user) {
-        console.log('storing user: ', user);
         storeAuthData({
           username: user.username,
           role: user.role,
