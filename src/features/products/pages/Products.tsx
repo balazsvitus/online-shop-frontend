@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import ProductsTableItem from '../components/ProductsTableItem';
 import useProducts from '../hooks/useProducts';
 import { useEffect } from 'react';
-import styles from '../styles/Products.module.css';
+import '../styles/Products.module.css';
 
 export default function Products() {
   const { fetchProducts, products, productsLoading } = useProducts();
@@ -16,9 +16,9 @@ export default function Products() {
       <div className="table-container">
         <div className="top-row">
           <h1>Products</h1>
-          <div className={`${styles.topRowButtons}`}>
+          <div className="top-row-buttons">
             <Link to="/cart">
-              <button>CART</button>
+              <button className="top-row-button">CART</button>
             </Link>
             <Link to="/add-product">
               <button>ADD</button>

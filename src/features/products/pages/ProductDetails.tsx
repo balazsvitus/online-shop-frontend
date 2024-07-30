@@ -80,12 +80,22 @@ export default function ProductDetails() {
               <div className="table-container">
                 <div className="top-row">
                   <h1>{`Product: ${productDetails?.name}`}</h1>
-                  <div className={`${styles.topRowButtons}`}>
-                    <button className={styles.backButton} onClick={handleBack}>
+                  <div className="top-row-buttons">
+                    <button
+                      className={`${styles.backButton} top-row-button`}
+                      onClick={handleBack}
+                    >
                       BACK
                     </button>
-                    <button onClick={handleEdit}>EDIT</button>
-                    <button onClick={handleAddToCart}>ADD TO CART</button>
+                    <button className="top-row-button" onClick={handleEdit}>
+                      EDIT
+                    </button>
+                    <button
+                      className="top-row-button"
+                      onClick={handleAddToCart}
+                    >
+                      ADD TO CART
+                    </button>
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}

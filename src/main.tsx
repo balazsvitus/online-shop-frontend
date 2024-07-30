@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { ShoppingCartProvider } from './contexts/ShoppingCartContext.tsx';
+import AuthContextProvider from './contexts/AuthContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ShoppingCartProvider>
-      <App />
-    </ShoppingCartProvider>
+    <AuthContextProvider>
+      <ShoppingCartProvider>
+        <App />
+      </ShoppingCartProvider>
+    </AuthContextProvider>
   </React.StrictMode>,
 );

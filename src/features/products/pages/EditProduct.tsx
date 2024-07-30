@@ -227,7 +227,10 @@ export default function EditProduct() {
               )}
 
               <div className={styles.formButtons}>
-                <button className={styles.cancelButton} onClick={handleCancel}>
+                <button
+                  className={`${styles.cancelButton} top-row-button`}
+                  onClick={handleCancel}
+                >
                   Cancel
                 </button>
                 <button type="submit" disabled={updatingProduct}>
