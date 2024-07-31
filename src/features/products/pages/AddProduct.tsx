@@ -3,9 +3,9 @@ import styles from '../styles/ProductForm.module.css';
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useProductCategories from '../hooks/useProductCategories';
 import { useAddProductMutation } from '../api/productApiSlice';
 import { useEffect } from 'react';
+import { useGetProductCategoriesQuery } from '../api/productCategoriesApiSlice';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name should have at least 3 characters'),
@@ -29,8 +29,7 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 export default function AddProduct() {
   const navigate = useNavigate();
-  const { productCategories, productCategoriesLoading } =
-    useProductCategories();
+
   const {
     register,
     handleSubmit,
@@ -39,24 +38,28 @@ export default function AddProduct() {
     resolver: zodResolver(productSchema),
   });
 
-  const [addProduct, { isLoading, isSuccess, isError, error }] =
-    useAddProductMutation();
+  const [
+    addProduct,
+    { isLoading: isAdding, isSuccess: isAddingSuccess, error: addingError },
+  ] = useAddProductMutation();
+  const { isFetching, data: productCategories } =
+    useGetProductCategoriesQuery();
+
+  useEffect(() => {
+    if (isAddingSuccess) {
+      navigate('/products');
+    }
+  }, [isAddingSuccess, navigate]);
+
+  useEffect(() => {
+    if (addingError) {
+      alert((addingError as { error: string }).error);
+    }
+  }, [addingError]);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
     addProduct(data);
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      navigate('/products');
-    }
-  }, [isSuccess, navigate]);
-
-  useEffect(() => {
-    if (isError) {
-      alert((error as { error: string }).error);
-    }
-  }, [isError, error]);
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -152,7 +155,7 @@ export default function AddProduct() {
             )}
           </div>
 
-          {!productCategoriesLoading && (
+          {!isFetching && productCategories && (
             <>
               <div className={`${styles.gridItem} ${styles.item1}`}>
                 <label htmlFor="category">Category</label>
@@ -184,7 +187,7 @@ export default function AddProduct() {
             >
               Cancel
             </button>
-            <button type="submit" disabled={isLoading}>
+            <button type="submit" disabled={isAdding}>
               Submit
             </button>
           </div>

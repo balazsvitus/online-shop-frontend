@@ -1,78 +1,73 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import useProductDetails from '../hooks/useProductDetails';
 import styles from '../styles/ProductDetails.module.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 import useAuthContext from '../../../hooks/useAuthContext';
-import { useDeleteProductMutation } from '../api/productApiSlice';
+import {
+  useDeleteProductMutation,
+  useLazyGetProductQuery,
+} from '../api/productApiSlice';
+import { ProductDetailType } from '../../../types/ProductDetail';
 
 export default function ProductDetails() {
   const { productId } = useParams();
-  const {
-    fetchProductDetails,
-    productDetails,
-    productDetailsLoading,
-    setProductFromState,
-  } = useProductDetails(productId!);
+  const [product, setProduct] = useState<ProductDetailType | null>(null);
   const navigate = useNavigate();
   const { addToShoppingCart } = useShoppingCartContext();
 
   const location = useLocation();
-  const { product } = location.state || {};
+  const { product: productFromState } = location.state || {};
   const { authData } = useAuthContext();
 
-  const [deleteProduct, { isLoading, isError, isSuccess, error }] =
-    useDeleteProductMutation();
+  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+  const [fetchProductDetails, { isError, isFetching, error, data }] =
+    useLazyGetProductQuery();
 
   useEffect(() => {
-    const navigateToProducts = () => {
-      navigate('/products', { replace: true });
-    };
-
-    if (product) {
-      setProductFromState(product);
-    } else {
-      fetchProductDetails(navigateToProducts);
+    if (productFromState) {
+      setProduct(productFromState);
+    } else if (productId) {
+      fetchProductDetails(productId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [productFromState, productId, fetchProductDetails]);
 
   useEffect(() => {
-    if (isSuccess) {
-      navigate('/products');
+    if (data) {
+      setProduct(data);
     }
-  }, [isSuccess, navigate]);
+  }, [data]);
 
   useEffect(() => {
     if (isError) {
-      alert((error as { error: string }).error);
+      alert(
+        (error as { message: string }).message ||
+          'Error fetching product details',
+      );
+      navigate('/products');
     }
-  }, [isError, error]);
+  }, [isError, error, navigate]);
 
   const handleDelete = () => {
-    if (!productDetailsLoading && !isLoading) {
-      const result = confirm(
-        `Do you really want to delete ${productDetails?.name}?`,
+    if (!isFetching && !isDeleting && product) {
+      const confirmDelete = confirm(
+        `Do you really want to delete ${product?.name}?`,
       );
-      if (result) {
-        deleteProduct(productDetails!.id);
-      }
+      if (confirmDelete) deleteProduct(product!.id);
     }
   };
 
-  const handleBack = () => {
-    navigate('/');
-  };
+  const handleBack = () => navigate('/');
 
   const handleEdit = () => {
-    navigate(`/edit-product/${productId}`, {
-      state: { product: productDetails },
-    });
+    if (product)
+      navigate(`/edit-product/${productId}`, {
+        state: { product },
+      });
   };
 
   const handleAddToCart = () => {
-    if (productDetails) {
-      addToShoppingCart(productDetails);
+    if (product) {
+      addToShoppingCart(product);
     } else {
       alert(
         'An error occured while trying to add the item to the shopping cart!',
@@ -80,74 +75,64 @@ export default function ProductDetails() {
     }
   };
 
-  return (
-    <div
-      className="center-table-container"
-      style={productDetailsLoading ? { height: '100dvh' } : {}}
-    >
-      {productDetailsLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {!productDetails ? (
-            <p>The product cannot be found. Redirecting...</p>
-          ) : (
-            <>
-              <div className="table-container">
-                <div className="top-row">
-                  <h1>{`Product: ${productDetails?.name}`}</h1>
-                  <div className="top-row-buttons">
-                    <button
-                      className={`${styles.backButton} top-row-button`}
-                      onClick={handleBack}
-                    >
-                      BACK
-                    </button>
-                    <button
-                      className="top-row-button"
-                      onClick={handleEdit}
-                      disabled={authData.role !== 'admin'}
-                    >
-                      EDIT
-                    </button>
-                    <button
-                      className="top-row-button"
-                      onClick={handleAddToCart}
-                    >
-                      ADD TO CART
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={handleDelete}
-                      disabled={isLoading || authData.role !== 'admin'}
-                    >
-                      DELETE
-                    </button>
-                  </div>
-                </div>
+  if (isFetching) {
+    return <p>Loading...</p>;
+  }
 
-                <div className={`${styles.detailsSeparated}`}>
-                  <div className={`${styles.detailsSeparatedLeft}`}>
-                    <p>{`Name: ${productDetails?.name}`}</p>
-                    <p>{`Category: ${productDetails?.category.name}`}</p>
-                    <p>{`Price: ${productDetails?.price} RON`}</p>
-                  </div>
-                  <div className={`${styles.detailsSeparatedRight}`}>
-                    <img
-                      className={styles.detailsImage}
-                      src={productDetails?.imageUrl}
-                      alt="Image of the product"
-                    />
-                  </div>
-                </div>
-                <div className={`${styles.description}`}>
-                  <p>{`Description: ${productDetails?.description}`}</p>
-                </div>
-              </div>
-            </>
-          )}
-        </>
-      )}
+  if (!product) {
+    return <p>The product cannot be found. Redirecting...</p>;
+  }
+
+  return (
+    <div className="center-table-container">
+      <div className="table-container">
+        <div className="top-row">
+          <h1>{`Product: ${product?.name}`}</h1>
+          <div className="top-row-buttons">
+            <button
+              className={`${styles.backButton} top-row-button`}
+              onClick={handleBack}
+            >
+              BACK
+            </button>
+            <button
+              className="top-row-button"
+              onClick={handleEdit}
+              disabled={authData.role !== 'admin'}
+            >
+              EDIT
+            </button>
+            <button className="top-row-button" onClick={handleAddToCart}>
+              ADD TO CART
+            </button>
+            <button
+              className={styles.deleteButton}
+              onClick={handleDelete}
+              disabled={isDeleting || authData.role !== 'admin'}
+            >
+              DELETE
+            </button>
+          </div>
+        </div>
+
+        <div className={`${styles.detailsSeparated}`}>
+          <div className={`${styles.detailsSeparatedLeft}`}>
+            <p>{`Name: ${product?.name}`}</p>
+            <p>{`Category: ${product?.category.name}`}</p>
+            <p>{`Price: ${product?.price} RON`}</p>
+          </div>
+          <div className={`${styles.detailsSeparatedRight}`}>
+            <img
+              className={styles.detailsImage}
+              src={product?.imageUrl}
+              alt="Image of the product"
+            />
+          </div>
+        </div>
+        <div className={`${styles.description}`}>
+          <p>{`Description: ${product?.description}`}</p>
+        </div>
+      </div>
     </div>
   );
 }

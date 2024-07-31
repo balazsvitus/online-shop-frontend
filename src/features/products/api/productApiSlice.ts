@@ -6,11 +6,16 @@ import customFetchBaseQuery from '../../../api/fetchBaseQuery';
 export const productApiSlice = createApi({
   reducerPath: 'productApi',
   baseQuery: customFetchBaseQuery(),
-  tagTypes: ['Products'],
+  tagTypes: ['Products', 'Product'],
   endpoints: (builder) => ({
     getProducts: builder.query<ProductDetailType[], void>({
       query: () => API_URLS.PRODUCTS,
       providesTags: ['Products'],
+    }),
+
+    getProduct: builder.query<ProductDetailType, string>({
+      query: (id) => `${API_URLS.PRODUCTS}/${id}`,
+      providesTags: ['Product'],
     }),
 
     addProduct: builder.mutation<ProductDetailType, ProductDTO>({
@@ -19,7 +24,7 @@ export const productApiSlice = createApi({
         method: 'POST',
         body: product,
       }),
-      invalidatesTags: ['Products'],
+      invalidatesTags: ['Products', 'Product'],
     }),
 
     updateProduct: builder.mutation<
@@ -31,7 +36,7 @@ export const productApiSlice = createApi({
         method: 'PUT',
         body: product,
       }),
-      invalidatesTags: ['Products'],
+      invalidatesTags: ['Products', 'Product'],
     }),
 
     deleteProduct: builder.mutation<void, string>({
@@ -39,13 +44,14 @@ export const productApiSlice = createApi({
         url: `${API_URLS.PRODUCTS}/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Products'],
+      invalidatesTags: ['Products', 'Product'],
     }),
   }),
 });
 
 export const {
   useGetProductsQuery,
+  useLazyGetProductQuery,
   useAddProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,

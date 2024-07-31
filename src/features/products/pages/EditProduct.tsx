@@ -3,10 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
-import useProductDetails from '../hooks/useProductDetails';
-import { useEffect } from 'react';
-import useProductCategories from '../hooks/useProductCategories';
-import { useUpdateProductMutation } from '../api/productApiSlice';
+import { useEffect, useState } from 'react';
+import {
+  useLazyGetProductQuery,
+  useUpdateProductMutation,
+} from '../api/productApiSlice';
+import { ProductDetailType } from '../../../types/ProductDetail';
+import { useGetProductCategoriesQuery } from '../api/productCategoriesApiSlice';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name should have at least 3 characters'),
@@ -26,6 +29,13 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 
 export default function EditProduct() {
+  const { productId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { product: productFromState } = location.state || {};
+
+  const [product, setProduct] = useState<ProductDetailType | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -34,221 +44,224 @@ export default function EditProduct() {
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
   });
-  const { productId } = useParams();
-  const location = useLocation();
-  const { product } = location.state || {};
-  const navigate = useNavigate();
-  const {
-    productDetails,
-    productDetailsLoading,
-    fetchProductDetails,
-    setProductFromState,
-  } = useProductDetails(productId!);
-  const { productCategories, productCategoriesLoading } =
-    useProductCategories();
-  const [updateProduct, { isLoading, isError, isSuccess, error }] =
-    useUpdateProductMutation();
+
+  const [fetchProductDetails, { isFetching, error: fetchError, data }] =
+    useLazyGetProductQuery();
+  const [
+    updateProduct,
+    { isLoading: isUpdating, isSuccess: isUpdateSuccess, error: updateError },
+  ] = useUpdateProductMutation();
+  const { isFetching: isProductCategoriesFetching, data: productCategories } =
+    useGetProductCategoriesQuery();
 
   useEffect(() => {
-    const navigateToProducts = () => {
-      navigate('/products', { replace: true });
-    };
-
-    if (product) {
-      setProductFromState(product);
-    } else {
-      fetchProductDetails(navigateToProducts);
+    if (productFromState) {
+      setProduct(productFromState);
+    } else if (productId) {
+      fetchProductDetails(productId);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [fetchProductDetails, productFromState, productId]);
 
   useEffect(() => {
-    setValue('name', productDetails?.name || '');
-    setValue('description', productDetails?.description || '');
-    setValue('price', productDetails?.price || 1);
-    setValue('weight', productDetails?.weight || 0);
-    setValue('supplier', productDetails?.supplier || '');
-    setValue('imageUrl', productDetails?.imageUrl || '');
-    setValue('category', productDetails?.category.id || '');
-  }, [productDetails, setValue]);
-
-  const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    updateProduct({ id: productId!, product: data });
-  };
+    if (data) {
+      setProduct(data);
+    }
+  }, [data]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (product) {
+      setValue('name', product.name);
+      setValue('description', product.description);
+      setValue('price', product.price);
+      setValue('weight', product.weight);
+      setValue('supplier', product.supplier);
+      setValue('imageUrl', product.imageUrl);
+      setValue('category', product.category.id);
+    }
+  }, [product, setValue]);
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
       navigate(`/products/${productId}`);
     }
-  }, [isSuccess, navigate, productId]);
+  }, [isUpdateSuccess, navigate, productId]);
 
   useEffect(() => {
-    if (isError) {
-      alert((error as { error: string }).error);
+    if (fetchError) {
+      alert((fetchError as { error: string }).error);
     }
-  }, [isError, error]);
+  }, [fetchError]);
+
+  useEffect(() => {
+    if (updateError) {
+      alert((updateError as { error: string }).error);
+    }
+  }, [updateError]);
+
+  const onSubmit: SubmitHandler<ProductFormValues> = (formData) => {
+    updateProduct({ id: productId!, product: formData });
+  };
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     navigate(`/products/${productId}`);
   };
 
+  if (isFetching) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div>
-      {productDetailsLoading ? (
-        <p>Loading</p>
-      ) : (
-        <div className={`${styles.centerTableContainer}`}>
-          <div className={`${styles.tableContainer}`}>
-            <div className={`${styles.topRow}`}>
-              <h1>Edit product: {productDetails?.name}</h1>
+      <div className={`${styles.centerTableContainer}`}>
+        <div className={`${styles.tableContainer}`}>
+          <div className={`${styles.topRow}`}>
+            <h1>Edit product: {product?.name}</h1>
+          </div>
+
+          <form
+            className={styles.gridContainer}
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="name">Name</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <input type="text" id="name" {...register('name')}></input>
+              {errors.name && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
-            <form
-              className={styles.gridContainer}
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="name">Name</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <input type="text" id="name" {...register('name')}></input>
-                {errors.name && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="description">Description</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <textarea
-                  id="description"
-                  {...register('description')}
-                ></textarea>
-                {errors.description && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="price">Price</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <input
-                  type="number"
-                  id="price"
-                  step="1"
-                  {...register('price')}
-                ></input>
-                {errors.price && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.price.message}
-                  </p>
-                )}
-              </div>
-
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="weight">Weight</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <input
-                  type="number"
-                  id="weight"
-                  step="1"
-                  {...register('weight')}
-                ></input>
-                {errors.weight && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.weight.message}
-                  </p>
-                )}
-              </div>
-
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="supplier">Supplier</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <input
-                  type="text"
-                  id="supplier"
-                  {...register('supplier')}
-                ></input>
-                {errors.supplier && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.supplier.message}
-                  </p>
-                )}
-              </div>
-
-              <div className={`${styles.gridItem} ${styles.item1}`}>
-                <label htmlFor="imageUrl">Image URL</label>
-              </div>
-              <div className={`${styles.gridItem} ${styles.item2}`}>
-                <input
-                  type="text"
-                  id="imageUrl"
-                  {...register('imageUrl')}
-                ></input>
-                {errors.imageUrl && (
-                  <p className={`${styles.errorMessage}`}>
-                    {errors.imageUrl.message}
-                  </p>
-                )}
-              </div>
-
-              {!productCategoriesLoading && (
-                <>
-                  <div className={`${styles.gridItem} ${styles.item1}`}>
-                    <label htmlFor="category">Category</label>
-                  </div>
-                  <div className={`${styles.gridItem} ${styles.item2}`}>
-                    <select
-                      id="category"
-                      defaultValue=""
-                      {...register('category')}
-                    >
-                      <option value="" disabled>
-                        Select a category
-                      </option>
-                      {productCategories.map((productCategory) => (
-                        <option
-                          value={productCategory.id}
-                          key={productCategory.id}
-                        >
-                          {productCategory.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.category && (
-                      <p className={`${styles.errorMessage}`}>
-                        {errors.category.message}
-                      </p>
-                    )}
-                  </div>
-                </>
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="description">Description</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <textarea
+                id="description"
+                {...register('description')}
+              ></textarea>
+              {errors.description && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.description.message}
+                </p>
               )}
+            </div>
 
-              <div className={styles.formButtons}>
-                <button
-                  className={`${styles.cancelButton} top-row-button`}
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button type="submit" disabled={isLoading}>
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="price">Price</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <input
+                type="number"
+                id="price"
+                step="1"
+                {...register('price')}
+              ></input>
+              {errors.price && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.price.message}
+                </p>
+              )}
+            </div>
+
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="weight">Weight</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <input
+                type="number"
+                id="weight"
+                step="1"
+                {...register('weight')}
+              ></input>
+              {errors.weight && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.weight.message}
+                </p>
+              )}
+            </div>
+
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="supplier">Supplier</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <input
+                type="text"
+                id="supplier"
+                {...register('supplier')}
+              ></input>
+              {errors.supplier && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.supplier.message}
+                </p>
+              )}
+            </div>
+
+            <div className={`${styles.gridItem} ${styles.item1}`}>
+              <label htmlFor="imageUrl">Image URL</label>
+            </div>
+            <div className={`${styles.gridItem} ${styles.item2}`}>
+              <input
+                type="text"
+                id="imageUrl"
+                {...register('imageUrl')}
+              ></input>
+              {errors.imageUrl && (
+                <p className={`${styles.errorMessage}`}>
+                  {errors.imageUrl.message}
+                </p>
+              )}
+            </div>
+
+            {!isProductCategoriesFetching && productCategories && (
+              <>
+                <div className={`${styles.gridItem} ${styles.item1}`}>
+                  <label htmlFor="category">Category</label>
+                </div>
+                <div className={`${styles.gridItem} ${styles.item2}`}>
+                  <select
+                    id="category"
+                    defaultValue=""
+                    {...register('category')}
+                  >
+                    <option value="" disabled>
+                      Select a category
+                    </option>
+                    {productCategories.map((productCategory) => (
+                      <option
+                        value={productCategory.id}
+                        key={productCategory.id}
+                      >
+                        {productCategory.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category && (
+                    <p className={`${styles.errorMessage}`}>
+                      {errors.category.message}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+
+            <div className={styles.formButtons}>
+              <button
+                className={`${styles.cancelButton} top-row-button`}
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+              <button type="submit" disabled={isUpdating}>
+                Save
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+      </div>
     </div>
   );
 }

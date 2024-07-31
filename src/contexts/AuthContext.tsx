@@ -10,6 +10,7 @@ type UserType = {
 
 type AuthContextType = {
   authData: UserType;
+  authLoading: boolean;
   storeAuthData: (user: UserType) => void;
   logout: () => void;
 };
@@ -27,6 +28,7 @@ export default function AuthContextProvider({
     role: '',
     accessToken: '',
   });
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   const storeAuthData = (data: UserType) => {
     setAuthData(data);
@@ -52,10 +54,13 @@ export default function AuthContextProvider({
         });
       }
     }
+    setAuthLoading(false);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authData, storeAuthData, logout }}>
+    <AuthContext.Provider
+      value={{ authData, authLoading, storeAuthData, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
