@@ -18,33 +18,23 @@ import useAuthContext from './hooks/useAuthContext';
 function App() {
   const { authLoading } = useAuthContext();
 
+  if (authLoading) return <h1>Loading...</h1>;
+
   return (
-    <>
-      {authLoading ? (
-        <h1>Loading...</h1>
-      ) : (
-        <Router>
-          <Routes>
-            <Route
-              path="/"
-              element={<Navigate to="/products" replace={true} />}
-            />
-            <Route element={<ProtectedLayout />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/add-product" element={<AddProduct />} />
-              <Route
-                path="/edit-product/:productId"
-                element={<EditProduct />}
-              />
-              <Route path="/products/:productId" element={<ProductDetails />} />
-              <Route path="/cart" element={<ShoppingCart />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-      )}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/products" replace={true} />} />
+        <Route element={<ProtectedLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/edit-product/:productId" element={<EditProduct />} />
+          <Route path="/products/:productId" element={<ProductDetails />} />
+          <Route path="/cart" element={<ShoppingCart />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
