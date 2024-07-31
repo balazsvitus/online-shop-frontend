@@ -7,9 +7,15 @@ export const descriptionSchemaCheck = z
   .string()
   .min(10, 'Description should have at least 10 characters');
 export const priceSchemaCheck = z
-  .number()
-  .min(1, 'Price must be bigger than 0');
-export const weightSchemaCheck = z.number().min(0, 'Weight must be positive');
+  .string()
+  .refine((val) => !Number.isNaN(parseInt(val, 10)), {
+    message: 'Expected number, received a string',
+  });
+export const weightSchemaCheck = z
+  .string()
+  .refine((val) => !Number.isNaN(parseFloat(val)), {
+    message: 'Expected number, received a string',
+  });
 export const supplierSchemaCheck = z
   .string()
   .min(1, 'Supplier should have at least 1 character');

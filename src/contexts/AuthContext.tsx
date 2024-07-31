@@ -2,12 +2,7 @@ import { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearAuth, setAuth } from '../api/authSlice';
 import { LOCALSTORAGE_USER } from '../lib/constants';
-
-type UserType = {
-  username: string;
-  role: string;
-  accessToken: string;
-};
+import { UserType } from '../types/Auth';
 
 type AuthContextType = {
   authData: UserType;
@@ -58,6 +53,7 @@ export default function AuthContextProvider({
       }
     }
     setAuthLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = useMemo(
@@ -68,6 +64,7 @@ export default function AuthContextProvider({
       storeAuthData,
       clearAuthData,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [authData, authLoading, isAdmin],
   );
 

@@ -19,7 +19,8 @@ export default function ProductDetails() {
   const { product: productFromState } = location.state || {};
   const { isAdmin } = useAuthContext();
 
-  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+  const [deleteProduct, { isLoading: isDeleting, isSuccess: isDeleteSuccess }] =
+    useDeleteProductMutation();
   const [fetchProductDetails, { isError, isFetching, error, data }] =
     useLazyGetProductQuery();
 
@@ -36,6 +37,12 @@ export default function ProductDetails() {
       setProduct(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      navigate('/products');
+    }
+  }, [isDeleteSuccess, navigate]);
 
   useEffect(() => {
     if (isError) {

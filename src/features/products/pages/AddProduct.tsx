@@ -59,7 +59,13 @@ export default function AddProduct() {
   }, [addingError]);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    addProduct(data);
+    const productFromForm = {
+      ...data,
+      price: parseInt(data.price, 10),
+      weight: parseFloat(data.price),
+    };
+
+    addProduct(productFromForm);
   };
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {

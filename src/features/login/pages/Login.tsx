@@ -2,8 +2,11 @@ import styles from '../styles/Login.module.css';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import useLogin from '../hooks/useLogin';
+// import useLogin from '../hooks/useLogin';
 import { passwordSchemaCheck, usernameSchemaCheck } from '../../../lib/schemas';
+import { useLoginUserMutation } from '../api/loginApiSlice';
+import useAuthContext from '../../../hooks/useAuthContext';
+import { useEffect } from 'react';
 
 const userSchema = z.object({
   username: usernameSchemaCheck,
@@ -20,11 +23,22 @@ export default function Login() {
   } = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
   });
-  const { login, loginLoading } = useLogin();
+  const { storeAuthData } = useAuthContext();
+  // const { login, loginLoading } = useLogin();
+
+  const [login, { isLoading: loginLoading, data: loginData }] =
+    useLoginUserMutation();
 
   const onSubmit: SubmitHandler<UserFormValues> = (data) => {
-    login(data.username, data.password);
+    login({ username: data.username, password: data.password });
   };
+
+  useEffect(() => {
+    if (loginData) {
+      storeAuthData(loginData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loginData]);
 
   return (
     <div className={styles.centerForm}>

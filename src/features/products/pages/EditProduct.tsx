@@ -76,8 +76,8 @@ export default function EditProduct() {
     if (product) {
       setValue('name', product.name);
       setValue('description', product.description);
-      setValue('price', product.price);
-      setValue('weight', product.weight);
+      setValue('price', product.price.toString());
+      setValue('weight', product.weight.toString());
       setValue('supplier', product.supplier);
       setValue('imageUrl', product.imageUrl);
       setValue('category', product.category.id);
@@ -103,7 +103,12 @@ export default function EditProduct() {
   }, [updateError]);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (formData) => {
-    updateProduct({ id: productId!, product: formData });
+    const product = {
+      ...formData,
+      price: parseInt(formData.price, 10),
+      weight: parseFloat(formData.weight),
+    };
+    updateProduct({ id: productId!, product });
   };
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {

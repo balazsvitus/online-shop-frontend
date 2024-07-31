@@ -24,7 +24,8 @@ export default function ShoppingCart() {
 
   useEffect(() => {
     if (isCheckoutSuccess) emptyShoppingCart();
-  }, [isCheckoutSuccess, emptyShoppingCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCheckoutSuccess]);
 
   useEffect(() => {
     if (checkoutError)
