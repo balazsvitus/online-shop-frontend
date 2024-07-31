@@ -13,23 +13,38 @@ import NotFound from './pages/NotFound';
 import EditProduct from './features/products/pages/EditProduct';
 import ProtectedLayout from './layouts/ProtectedLayout';
 import Login from './features/login/pages/Login';
+import useAuthContext from './hooks/useAuthContext';
 
 function App() {
+  const { authLoading } = useAuthContext();
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/products" replace={true} />} />
-        <Route element={<ProtectedLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/edit-product/:productId" element={<EditProduct />} />
-          <Route path="/products/:productId" element={<ProductDetails />} />
-          <Route path="/cart" element={<ShoppingCart />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <>
+      {authLoading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to="/products" replace={true} />}
+            />
+            <Route element={<ProtectedLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route
+                path="/edit-product/:productId"
+                element={<EditProduct />}
+              />
+              <Route path="/products/:productId" element={<ProductDetails />} />
+              <Route path="/cart" element={<ShoppingCart />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      )}
+    </>
   );
 }
 
