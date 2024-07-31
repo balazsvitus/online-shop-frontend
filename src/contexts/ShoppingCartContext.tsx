@@ -1,6 +1,7 @@
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
 import { ProductDetailType } from '../types/ProductDetail';
+import { LOCALSTORAGE_CART } from '../lib/constants';
 
 type ShoppingCartContextType = {
   shoppingCart: ShoppingCartItemType[];
@@ -30,6 +31,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       });
     }
     setShoppingCart(tempCart);
+    localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
     alert(`${product.name} successfully added to the shopping cart!`);
   };
 
@@ -46,13 +48,25 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         tempCart.splice(index, 1);
       }
       setShoppingCart(tempCart);
+      localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
       alert(`${product.name} successfully removed from the shopping cart!`);
     }
   };
 
   const emptyShoppingCart = () => {
     setShoppingCart([]);
+    localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify([]));
   };
+
+  useEffect(() => {
+    const cartFromStorage = localStorage.getItem(LOCALSTORAGE_CART);
+    if (cartFromStorage) {
+      const cart = JSON.parse(cartFromStorage);
+      if (cart) {
+        setShoppingCart(cart);
+      }
+    }
+  }, []);
 
   const value = useMemo(
     () => ({

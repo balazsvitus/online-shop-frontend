@@ -33,8 +33,11 @@ export default function ShoppingCart() {
       <div className="table-container">
         <div className="top-row">
           <h1>Shopping cart</h1>
-          <div className={`${styles.topRowButtons}`}>
-            <button className={styles.backButton} onClick={handleBack}>
+          <div className="top-row-buttons">
+            <button
+              className={`${styles.backButton} top-row-button`}
+              onClick={handleBack}
+            >
               BACK
             </button>
             <button

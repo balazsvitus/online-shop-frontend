@@ -3,6 +3,7 @@ import useProductDetails from '../hooks/useProductDetails';
 import styles from '../styles/ProductDetails.module.css';
 import { useEffect } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -19,6 +20,7 @@ export default function ProductDetails() {
 
   const location = useLocation();
   const { product } = location.state || {};
+  const { authData, isAdmin } = useAuthContext();
 
   useEffect(() => {
     const navigateToProducts = () => {
@@ -48,6 +50,12 @@ export default function ProductDetails() {
     navigate('/');
   };
 
+  const handleEdit = () => {
+    navigate(`/edit-product/${productId}`, {
+      state: { product: productDetails },
+    });
+  };
+
   const handleAddToCart = () => {
     if (productDetails) {
       addToShoppingCart(productDetails);
@@ -74,16 +82,30 @@ export default function ProductDetails() {
               <div className="table-container">
                 <div className="top-row">
                   <h1>{`Product: ${productDetails?.name}`}</h1>
-                  <div className={`${styles.topRowButtons}`}>
-                    <button className={styles.backButton} onClick={handleBack}>
+                  <div className="top-row-buttons">
+                    <button
+                      className={`${styles.backButton} top-row-button`}
+                      onClick={handleBack}
+                    >
                       BACK
                     </button>
-                    <button>EDIT</button>
-                    <button onClick={handleAddToCart}>ADD TO CART</button>
+                    <button
+                      className="top-row-button"
+                      onClick={handleEdit}
+                      disabled={!isAdmin}
+                    >
+                      EDIT
+                    </button>
+                    <button
+                      className="top-row-button"
+                      onClick={handleAddToCart}
+                    >
+                      ADD TO CART
+                    </button>
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}
-                      disabled={productDeleteLoading}
+                      disabled={productDeleteLoading || !isAdmin}
                     >
                       DELETE
                     </button>

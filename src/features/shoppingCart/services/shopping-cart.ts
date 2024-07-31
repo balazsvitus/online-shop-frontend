@@ -11,7 +11,7 @@ export function createOrderDetails(
       shippedFrom,
       productId: shoppingCartItem.product.id,
       quantity: shoppingCartItem.quantity,
-    });
+    } as OrderDetailsInDto);
   });
   const order = {
     customer: '33c5965f-e370-43af-8d9a-c877463f31b1',
