@@ -17,7 +17,7 @@ export default function ProductDetails() {
 
   const location = useLocation();
   const { product: productFromState } = location.state || {};
-  const { authData } = useAuthContext();
+  const { isAdmin } = useAuthContext();
 
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
   const [fetchProductDetails, { isError, isFetching, error, data }] =
@@ -98,7 +98,7 @@ export default function ProductDetails() {
             <button
               className="top-row-button"
               onClick={handleEdit}
-              disabled={authData.role !== 'admin'}
+              disabled={!isAdmin}
             >
               EDIT
             </button>
@@ -108,7 +108,7 @@ export default function ProductDetails() {
             <button
               className={styles.deleteButton}
               onClick={handleDelete}
-              disabled={isDeleting || authData.role !== 'admin'}
+              disabled={isDeleting || !isAdmin}
             >
               DELETE
             </button>

@@ -1,6 +1,7 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearAuth, setAuth } from '../api/authSlice';
+import { LOCALSTORAGE_USER } from '../lib/constants';
 
 type UserType = {
   username: string;
@@ -11,8 +12,9 @@ type UserType = {
 type AuthContextType = {
   authData: UserType;
   authLoading: boolean;
+  isAdmin: boolean;
   storeAuthData: (user: UserType) => void;
-  logout: () => void;
+  clearAuthData: () => void;
 };
 
 export const AuthContext = createContext({} as AuthContextType);
@@ -23,45 +25,51 @@ export default function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const dispatch = useDispatch();
-  const [authData, setAuthData] = useState<UserType>({
-    username: '',
-    role: '',
-    accessToken: '',
-  });
+  const [authData, setAuthData] = useState<UserType>({} as UserType);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   const storeAuthData = (data: UserType) => {
     setAuthData(data);
-    localStorage.setItem('user', JSON.stringify(data));
+    localStorage.setItem(LOCALSTORAGE_USER, JSON.stringify(data));
     dispatch(setAuth(data));
+    setIsAdmin(data.role === 'admin');
   };
 
-  const logout = () => {
-    setAuthData({ username: '', role: '', accessToken: '' });
-    localStorage.removeItem('user');
+  const clearAuthData = () => {
+    setAuthData({} as UserType);
+    localStorage.removeItem(LOCALSTORAGE_USER);
     dispatch(clearAuth());
+    setIsAdmin(false);
   };
 
   useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');
+    const userFromStorage = localStorage.getItem(LOCALSTORAGE_USER);
     if (userFromStorage) {
       const user = JSON.parse(userFromStorage) as UserType;
       if (user) {
-        storeAuthData({
+        setAuthData({
           username: user.username,
           role: user.role,
           accessToken: user.accessToken,
         });
+        setIsAdmin(user.role === 'admin');
+        dispatch(setAuth(user));
       }
     }
     setAuthLoading(false);
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{ authData, authLoading, storeAuthData, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      authData,
+      authLoading,
+      isAdmin,
+      storeAuthData,
+      clearAuthData,
+    }),
+    [authData, authLoading, isAdmin],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -5,8 +5,7 @@ import useAuthContext from '../../../hooks/useAuthContext';
 import { useGetProductsQuery } from '../api/productApiSlice';
 
 export default function Products() {
-  const { authData } = useAuthContext();
-
+  const { isAdmin } = useAuthContext();
   const { data, isLoading } = useGetProductsQuery();
 
   return (
@@ -19,7 +18,7 @@ export default function Products() {
               <button className="top-row-button">CART</button>
             </Link>
             <Link to="/add-product">
-              <button disabled={authData.role !== 'admin'}>ADD</button>
+              <button disabled={!isAdmin}>ADD</button>
             </Link>
           </div>
         </div>

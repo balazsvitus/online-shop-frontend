@@ -3,13 +3,13 @@ import useAuthContext from '../hooks/useAuthContext';
 
 export default function ProtectedLayout() {
   const path = useLocation();
-  const { authData, logout } = useAuthContext();
+  const { authData, clearAuthData } = useAuthContext();
 
-  const loggedIn = authData.accessToken.length > 0;
+  const loggedIn = authData.accessToken && authData.accessToken.length > 0;
   const loginPath = path.pathname.startsWith('/login');
 
   const handleLogout = () => {
-    logout();
+    clearAuthData();
   };
 
   return (

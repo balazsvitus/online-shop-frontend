@@ -5,25 +5,29 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import {
+  categorySchemaCheck,
+  descriptionSchemaCheck,
+  imageSchemaCheck,
+  nameSchemaCheck,
+  priceSchemaCheck,
+  supplierSchemaCheck,
+  weightSchemaCheck,
+} from '../../../lib/schemas';
+import { ProductDetailType } from '../../../types/ProductDetail';
+import {
   useLazyGetProductQuery,
   useUpdateProductMutation,
 } from '../api/productApiSlice';
-import { ProductDetailType } from '../../../types/ProductDetail';
 import { useGetProductCategoriesQuery } from '../api/productCategoriesApiSlice';
 
 const productSchema = z.object({
-  name: z.string().min(3, 'Name should have at least 3 characters'),
-  description: z
-    .string()
-    .min(10, 'Description should have at least 10 characters'),
-  price: z.number(),
-  weight: z
-    .string()
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val) && val >= 0, 'Weight must be positive'),
-  supplier: z.string().min(1, 'Supplier should have at least 1 character'),
-  imageUrl: z.string().min(3, 'Image URL should have at least 3 characters'),
-  category: z.string().min(1, 'Category should not be empty'),
+  name: nameSchemaCheck,
+  description: descriptionSchemaCheck,
+  price: priceSchemaCheck,
+  weight: weightSchemaCheck,
+  supplier: supplierSchemaCheck,
+  imageUrl: imageSchemaCheck,
+  category: categorySchemaCheck,
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;

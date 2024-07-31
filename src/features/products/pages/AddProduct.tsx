@@ -6,23 +6,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAddProductMutation } from '../api/productApiSlice';
 import { useEffect } from 'react';
 import { useGetProductCategoriesQuery } from '../api/productCategoriesApiSlice';
+import {
+  categorySchemaCheck,
+  descriptionSchemaCheck,
+  imageSchemaCheck,
+  nameSchemaCheck,
+  priceSchemaCheck,
+  supplierSchemaCheck,
+  weightSchemaCheck,
+} from '../../../lib/schemas';
 
 const productSchema = z.object({
-  name: z.string().min(3, 'Name should have at least 3 characters'),
-  description: z
-    .string()
-    .min(10, 'Description should have at least 10 characters'),
-  price: z
-    .string()
-    .transform((val) => parseInt(val))
-    .refine((val) => !isNaN(val) && val > 0, 'Price must be bigger than 0'),
-  weight: z
-    .string()
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val) && val >= 0, 'Weight must be positive'),
-  supplier: z.string().min(1, 'Supplier should have at least 1 character'),
-  imageUrl: z.string().min(3, 'Image URL should have at least 3 characters'),
-  category: z.string().min(1, 'Category should not be empty'),
+  name: nameSchemaCheck,
+  description: descriptionSchemaCheck,
+  price: priceSchemaCheck,
+  weight: weightSchemaCheck,
+  supplier: supplierSchemaCheck,
+  imageUrl: imageSchemaCheck,
+  category: categorySchemaCheck,
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;

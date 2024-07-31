@@ -4,7 +4,7 @@ import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function useLogin() {
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
-  const { storeAuthData } = useAuthContext();
+  const { storeAuthData, clearAuthData } = useAuthContext();
 
   const login = useCallback(
     async (username: string, password: string) => {
@@ -41,5 +41,9 @@ export default function useLogin() {
     [storeAuthData],
   );
 
-  return { login, loginLoading };
+  const logout = () => {
+    clearAuthData();
+  };
+
+  return { login, loginLoading, logout };
 }
