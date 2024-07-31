@@ -5,9 +5,11 @@ import ShoppingCartItem from '../components/ShoppingCartItem';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { createOrderDetails } from '../services/shopping-cart';
 import { useAddOrderMutation } from '../api/orderApiSlice';
+import useAuthContext from '../../../hooks/useAuthContext';
 
 export default function ShoppingCart() {
   const navigate = useNavigate();
+  const { authData } = useAuthContext();
   const [shippedFrom, setShippedFrom] = useState<string>(
     '485229c8-732e-4b0b-bdea-19c249a70b70',
   );
@@ -37,7 +39,7 @@ export default function ShoppingCart() {
   };
 
   const handleCheckout = () => {
-    const order = createOrderDetails(shoppingCart, shippedFrom);
+    const order = createOrderDetails(shoppingCart, shippedFrom, authData.id);
     checkout(order);
   };
 
