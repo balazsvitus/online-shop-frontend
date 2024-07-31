@@ -4,6 +4,7 @@ import styles from '../styles/ProductDetails.module.css';
 import { useEffect } from 'react';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 import useAuthContext from '../../../hooks/useAuthContext';
+import { useDeleteProductMutation } from '../api/productApiSlice';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -11,8 +12,6 @@ export default function ProductDetails() {
     fetchProductDetails,
     productDetails,
     productDetailsLoading,
-    deleteProduct,
-    productDeleteLoading,
     setProductFromState,
   } = useProductDetails(productId!);
   const navigate = useNavigate();
@@ -21,6 +20,9 @@ export default function ProductDetails() {
   const location = useLocation();
   const { product } = location.state || {};
   const { authData } = useAuthContext();
+
+  const [deleteProduct, { isLoading, isError, isSuccess, error }] =
+    useDeleteProductMutation();
 
   useEffect(() => {
     const navigateToProducts = () => {
@@ -35,13 +37,25 @@ export default function ProductDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/products');
+    }
+  }, [isSuccess, navigate]);
+
+  useEffect(() => {
+    if (isError) {
+      alert((error as { error: string }).error);
+    }
+  }, [isError, error]);
+
   const handleDelete = () => {
-    if (!productDetailsLoading && !productDeleteLoading) {
+    if (!productDetailsLoading && !isLoading) {
       const result = confirm(
         `Do you really want to delete ${productDetails?.name}?`,
       );
       if (result) {
-        deleteProduct(navigate);
+        deleteProduct(productDetails!.id);
       }
     }
   };
@@ -105,9 +119,7 @@ export default function ProductDetails() {
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}
-                      disabled={
-                        productDeleteLoading || authData.role !== 'admin'
-                      }
+                      disabled={isLoading || authData.role !== 'admin'}
                     >
                       DELETE
                     </button>

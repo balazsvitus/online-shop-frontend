@@ -6,17 +6,13 @@ import { z } from 'zod';
 import useProductDetails from '../hooks/useProductDetails';
 import { useEffect } from 'react';
 import useProductCategories from '../hooks/useProductCategories';
-import useProducts from '../hooks/useProducts';
+import { useUpdateProductMutation } from '../api/productApiSlice';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name should have at least 3 characters'),
   description: z
     .string()
     .min(10, 'Description should have at least 10 characters'),
-  // price: z
-  //   .string()
-  //   .transform((val) => parseInt(val))
-  //   .refine((val) => !isNaN(val) && val > 0, 'Price must be bigger than 0'),
   price: z.number(),
   weight: z
     .string()
@@ -50,7 +46,8 @@ export default function EditProduct() {
   } = useProductDetails(productId!);
   const { productCategories, productCategoriesLoading } =
     useProductCategories();
-  const { updateProduct, updatingProduct } = useProducts();
+  const [updateProduct, { isLoading, isError, isSuccess, error }] =
+    useUpdateProductMutation();
 
   useEffect(() => {
     const navigateToProducts = () => {
@@ -77,10 +74,20 @@ export default function EditProduct() {
   }, [productDetails, setValue]);
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    updateProduct(productId!, data, () => {
-      navigate(`/products/${productId}`);
-    });
+    updateProduct({ id: productId!, product: data });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(`/products/${productId}`);
+    }
+  }, [isSuccess, navigate, productId]);
+
+  useEffect(() => {
+    if (isError) {
+      alert((error as { error: string }).error);
+    }
+  }, [isError, error]);
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -234,7 +241,7 @@ export default function EditProduct() {
                 >
                   Cancel
                 </button>
-                <button type="submit" disabled={updatingProduct}>
+                <button type="submit" disabled={isLoading}>
                   Save
                 </button>
               </div>

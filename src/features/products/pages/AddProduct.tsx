@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProductCategories from '../hooks/useProductCategories';
-import useProducts from '../hooks/useProducts';
+import { useAddProductMutation } from '../api/productApiSlice';
+import { useEffect } from 'react';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name should have at least 3 characters'),
@@ -30,7 +31,6 @@ export default function AddProduct() {
   const navigate = useNavigate();
   const { productCategories, productCategoriesLoading } =
     useProductCategories();
-  const { addProduct, addingProduct } = useProducts();
   const {
     register,
     handleSubmit,
@@ -39,17 +39,28 @@ export default function AddProduct() {
     resolver: zodResolver(productSchema),
   });
 
-  const navigateToProducts = () => {
-    navigate('/products');
-  };
+  const [addProduct, { isLoading, isSuccess, isError, error }] =
+    useAddProductMutation();
 
   const onSubmit: SubmitHandler<ProductFormValues> = (data) => {
-    addProduct(data, navigateToProducts);
+    addProduct(data);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/products');
+    }
+  }, [isSuccess, navigate]);
+
+  useEffect(() => {
+    if (isError) {
+      alert((error as { error: string }).error);
+    }
+  }, [isError, error]);
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    navigateToProducts();
+    navigate('/products');
   };
 
   return (
@@ -173,7 +184,7 @@ export default function AddProduct() {
             >
               Cancel
             </button>
-            <button type="submit" disabled={addingProduct}>
+            <button type="submit" disabled={isLoading}>
               Submit
             </button>
           </div>

@@ -4,10 +4,8 @@ import App from './App.tsx';
 import './index.css';
 import { ShoppingCartProvider } from './contexts/ShoppingCartContext.tsx';
 import AuthContextProvider from './contexts/AuthContext.tsx';
-import { ApiProvider } from '@reduxjs/toolkit/query/react';
-import { productApiSlice } from './features/products/api/productApiSlice.ts';
 import { Provider } from 'react-redux';
-import { store } from './lib/redux/store.ts';
+import { store } from './api/store.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

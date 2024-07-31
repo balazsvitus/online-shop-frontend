@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { clearAuth, setAuth } from '../lib/redux/authSlice';
+import { clearAuth, setAuth } from '../api/authSlice';
 
 type UserType = {
   username: string;
