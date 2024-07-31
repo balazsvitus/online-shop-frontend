@@ -111,6 +111,10 @@ export default function EditProduct() {
     return <p>Loading...</p>;
   }
 
+  if (!product) {
+    return <p>The product cannot be found. Redirecting...</p>;
+  }
+
   return (
     <div>
       <div className={`${styles.centerTableContainer}`}>

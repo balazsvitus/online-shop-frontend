@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles/ShoppingCart.module.css';
 import useShoppingCartContext from '../../../hooks/useShoppingCartContext';
 import ShoppingCartItem from '../components/ShoppingCartItem';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { createOrderDetails } from '../services/shopping-cart';
-import useShoppingCart from '../hooks/useShoppingCart';
+import { useAddOrderMutation } from '../api/orderApiSlice';
 
 export default function ShoppingCart() {
   const navigate = useNavigate();
@@ -13,7 +13,23 @@ export default function ShoppingCart() {
   );
   const { shoppingCart, removeFromShoppingCart, emptyShoppingCart } =
     useShoppingCartContext();
-  const { checkout, checkoutLoading } = useShoppingCart();
+  const [
+    checkout,
+    {
+      isLoading: isCheckoutLoading,
+      isSuccess: isCheckoutSuccess,
+      error: checkoutError,
+    },
+  ] = useAddOrderMutation();
+
+  useEffect(() => {
+    if (isCheckoutSuccess) emptyShoppingCart();
+  }, [isCheckoutSuccess, emptyShoppingCart]);
+
+  useEffect(() => {
+    if (checkoutError)
+      alert((checkoutError as { data: { message: string } }).data.message);
+  }, [checkoutError]);
 
   const handleBack = () => {
     navigate('/');
@@ -21,7 +37,7 @@ export default function ShoppingCart() {
 
   const handleCheckout = () => {
     const order = createOrderDetails(shoppingCart, shippedFrom);
-    checkout(order, emptyShoppingCart);
+    checkout(order);
   };
 
   const handleLocationChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -41,7 +57,7 @@ export default function ShoppingCart() {
               BACK
             </button>
             <button
-              disabled={shoppingCart.length === 0 || checkoutLoading}
+              disabled={shoppingCart.length === 0 || isCheckoutLoading}
               onClick={handleCheckout}
             >
               CHECKOUT

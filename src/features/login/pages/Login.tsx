@@ -5,7 +5,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import useLogin from '../hooks/useLogin';
 
 const passwordStrength = (password: string) => {
-  // Define your own password strength criteria
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumbers = /\d/.test(password);
