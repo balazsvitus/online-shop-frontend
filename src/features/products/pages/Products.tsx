@@ -1,17 +1,13 @@
 import { Link } from 'react-router-dom';
 import ProductsTableItem from '../components/ProductsTableItem';
-import useProducts from '../hooks/useProducts';
-import { useEffect } from 'react';
 import '../styles/Products.module.css';
 import useAuthContext from '../../../hooks/useAuthContext';
+import { useGetProductsQuery } from '../api/productApiSlice';
 
 export default function Products() {
-  const { fetchProducts, products, productsLoading } = useProducts();
   const { authData } = useAuthContext();
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  const { data, isLoading } = useGetProductsQuery();
 
   return (
     <div className="center-table-container">
@@ -27,7 +23,7 @@ export default function Products() {
             </Link>
           </div>
         </div>
-        {productsLoading || products.length === 0 ? (
+        {isLoading || !data ? (
           <p>Loading products...</p>
         ) : (
           <table>
@@ -40,7 +36,7 @@ export default function Products() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {data.map((product) => (
                 <ProductsTableItem key={product.id} product={product} />
               ))}
             </tbody>

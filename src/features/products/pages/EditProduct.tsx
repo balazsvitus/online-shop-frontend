@@ -13,10 +13,11 @@ const productSchema = z.object({
   description: z
     .string()
     .min(10, 'Description should have at least 10 characters'),
-  price: z
-    .string()
-    .transform((val) => parseInt(val))
-    .refine((val) => !isNaN(val) && val > 0, 'Price must be bigger than 0'),
+  // price: z
+  //   .string()
+  //   .transform((val) => parseInt(val))
+  //   .refine((val) => !isNaN(val) && val > 0, 'Price must be bigger than 0'),
+  price: z.number(),
   weight: z
     .string()
     .transform((val) => parseFloat(val))

@@ -1,4 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { clearAuth, setAuth } from '../lib/redux/authSlice';
 
 type UserType = {
   username: string;
@@ -19,6 +21,7 @@ export default function AuthContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const dispatch = useDispatch();
   const [authData, setAuthData] = useState<UserType>({
     username: '',
     role: '',
@@ -28,11 +31,13 @@ export default function AuthContextProvider({
   const storeAuthData = (data: UserType) => {
     setAuthData(data);
     localStorage.setItem('user', JSON.stringify(data));
+    dispatch(setAuth(data));
   };
 
   const logout = () => {
     setAuthData({ username: '', role: '', accessToken: '' });
     localStorage.removeItem('user');
+    dispatch(clearAuth());
   };
 
   useEffect(() => {
