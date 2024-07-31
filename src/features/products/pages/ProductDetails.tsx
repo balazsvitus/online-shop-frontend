@@ -20,7 +20,7 @@ export default function ProductDetails() {
 
   const location = useLocation();
   const { product } = location.state || {};
-  const { authData } = useAuthContext();
+  const { authData, isAdmin } = useAuthContext();
 
   useEffect(() => {
     const navigateToProducts = () => {
@@ -92,7 +92,7 @@ export default function ProductDetails() {
                     <button
                       className="top-row-button"
                       onClick={handleEdit}
-                      disabled={authData.role !== 'admin'}
+                      disabled={!isAdmin}
                     >
                       EDIT
                     </button>
@@ -105,9 +105,7 @@ export default function ProductDetails() {
                     <button
                       className={styles.deleteButton}
                       onClick={handleDelete}
-                      disabled={
-                        productDeleteLoading || authData.role !== 'admin'
-                      }
+                      disabled={productDeleteLoading || !isAdmin}
                     >
                       DELETE
                     </button>

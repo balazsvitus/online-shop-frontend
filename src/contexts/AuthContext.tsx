@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { LOCALSTORAGE_USER } from '../lib/constants';
 
 type UserType = {
   username: string;
@@ -8,8 +9,9 @@ type UserType = {
 
 type AuthContextType = {
   authData: UserType;
+  isAdmin: boolean;
   storeAuthData: (user: UserType) => void;
-  logout: () => void;
+  clearAuthData: () => void;
 };
 
 export const AuthContext = createContext({} as AuthContextType);
@@ -19,39 +21,45 @@ export default function AuthContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [authData, setAuthData] = useState<UserType>({
-    username: '',
-    role: '',
-    accessToken: '',
-  });
+  const [authData, setAuthData] = useState<UserType>({} as UserType);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const storeAuthData = (data: UserType) => {
     setAuthData(data);
-    localStorage.setItem('user', JSON.stringify(data));
+    localStorage.setItem(LOCALSTORAGE_USER, JSON.stringify(data));
+    setIsAdmin(data.role === 'admin');
   };
 
-  const logout = () => {
+  const clearAuthData = () => {
     setAuthData({ username: '', role: '', accessToken: '' });
-    localStorage.removeItem('user');
+    localStorage.removeItem(LOCALSTORAGE_USER);
+    setIsAdmin(false);
   };
 
   useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');
+    const userFromStorage = localStorage.getItem(LOCALSTORAGE_USER);
     if (userFromStorage) {
       const user = JSON.parse(userFromStorage) as UserType;
       if (user) {
-        storeAuthData({
+        setAuthData({
           username: user.username,
           role: user.role,
           accessToken: user.accessToken,
         });
+        setIsAdmin(user.role === 'admin');
       }
     }
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ authData, storeAuthData, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      authData,
+      isAdmin,
+      storeAuthData,
+      clearAuthData,
+    }),
+    [authData, isAdmin],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

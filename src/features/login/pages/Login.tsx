@@ -3,25 +3,11 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import useLogin from '../hooks/useLogin';
-
-const passwordStrength = (password: string) => {
-  // Define your own password strength criteria
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password);
-  const hasNumbers = /\d/.test(password);
-  const hasMinLength = password.length >= 8;
-
-  return hasUpperCase && hasLowerCase && hasNumbers && hasMinLength;
-};
+import { passwordSchemaCheck, usernameSchemaCheck } from '../../../lib/schemas';
 
 const userSchema = z.object({
-  username: z.string().min(3, 'Username should have at least 3 characters'),
-  password: z
-    .string()
-    .refine(
-      passwordStrength,
-      'Password must be at least 8 characters long and include uppercase, lowercase letters and numbers',
-    ),
+  username: usernameSchemaCheck,
+  password: passwordSchemaCheck,
 });
 
 type UserFormValues = z.infer<typeof userSchema>;
