@@ -56,11 +56,14 @@ export default function Products() {
                 <ShoppingCartRounded />
               </Button>
             </Link>
-            <Link to="/add-product">
-              <Button variant="contained" color="primary" disabled={!isAdmin}>
-                ADD
-              </Button>
-            </Link>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!isAdmin}
+              onClick={() => navigate('/add-product')}
+            >
+              ADD
+            </Button>
           </div>
         </div>
         {isLoading || !data ? (
