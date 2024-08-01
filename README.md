@@ -6,4 +6,4 @@
 
 ### Demo:
 
-![Demo Video](public/demo.mkv)
+![Demo Video](public/demo.gif)
