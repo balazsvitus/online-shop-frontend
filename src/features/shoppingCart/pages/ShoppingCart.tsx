@@ -171,7 +171,7 @@ export default function ShoppingCart() {
                             }
                           >
                             {LOCATIONS.map((location) => (
-                              <MenuItem value={location.id}>
+                              <MenuItem value={location.id} key={location.id}>
                                 {location.name}
                               </MenuItem>
                             ))}
