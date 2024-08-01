@@ -25,6 +25,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const productSchema = z.object({
   name: nameSchemaCheck,
@@ -64,7 +65,7 @@ export default function AddProduct() {
 
   useEffect(() => {
     if (addingError) {
-      alert((addingError as { error: string }).error);
+      toast.error((addingError as { error: string }).error);
     }
   }, [addingError]);
 

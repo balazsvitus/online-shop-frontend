@@ -23,6 +23,7 @@ import {
 import { ClearRounded } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { ShoppingCartItemType } from '../../../types/ShoppingCart';
+import { LOCATIONS } from '../../../lib/constants';
 
 export default function ShoppingCart() {
   const navigate = useNavigate();
@@ -52,7 +53,9 @@ export default function ShoppingCart() {
 
   useEffect(() => {
     if (checkoutError)
-      alert((checkoutError as { data: { message: string } }).data.message);
+      toast.error(
+        (checkoutError as { data: { message: string } }).data.message,
+      );
   }, [checkoutError]);
 
   const handleBack = () => {
@@ -146,7 +149,7 @@ export default function ShoppingCart() {
               <TableBody>
                 {shoppingCart.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
+                    <TableCell colSpan={6} align="center">
                       <Typography variant="h6">
                         There are no items in your shopping cart!
                       </Typography>
@@ -167,12 +170,11 @@ export default function ShoppingCart() {
                               handleLocationChange(event, row)
                             }
                           >
-                            <MenuItem value="485229c8-732e-4b0b-bdea-19c249a70b70">
-                              Vivo Cluj-Napoca
-                            </MenuItem>
-                            <MenuItem value="819056fc-ca67-4cbf-9dd3-f3765d4c8719">
-                              Kaufland Targu Secuiesc
-                            </MenuItem>
+                            {LOCATIONS.map((location) => (
+                              <MenuItem value={location.id}>
+                                {location.name}
+                              </MenuItem>
+                            ))}
                           </Select>
                         </TableCell>
                         <TableCell>

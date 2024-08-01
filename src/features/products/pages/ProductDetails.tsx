@@ -33,10 +33,12 @@ import {
   CategoryRounded,
   FactoryRounded,
   FitnessCenterRounded,
+  LocationOnRounded,
   NotesRounded,
   PaymentsRounded,
 } from '@mui/icons-material';
 import { LOCATIONS } from '../../../lib/constants';
+import { toast } from 'react-toastify';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -79,7 +81,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (isError) {
-      alert(
+      toast.error(
         (error as { message: string }).message ||
           'Error fetching product details',
       );
@@ -115,7 +117,7 @@ export default function ProductDetails() {
     if (product) {
       addToShoppingCart(product, shippedFrom);
     } else {
-      alert(
+      toast.error(
         'An error occured while trying to add the item to the shopping cart!',
       );
     }
@@ -250,7 +252,7 @@ export default function ProductDetails() {
                     <ListItem disablePadding>
                       <ListItemButton>
                         <ListItemIcon>
-                          <NotesRounded />
+                          <LocationOnRounded />
                         </ListItemIcon>
                         <Select
                           value={shippedFrom}

@@ -29,6 +29,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const productSchema = z.object({
   name: nameSchemaCheck,
@@ -102,13 +103,13 @@ export default function EditProduct() {
 
   useEffect(() => {
     if (fetchError) {
-      alert((fetchError as { error: string }).error);
+      toast.error((fetchError as { error: string }).error);
     }
   }, [fetchError]);
 
   useEffect(() => {
     if (updateError) {
-      alert((updateError as { error: string }).error);
+      toast.error((updateError as { error: string }).error);
     }
   }, [updateError]);
 
