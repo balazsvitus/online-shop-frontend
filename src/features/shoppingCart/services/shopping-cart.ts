@@ -3,13 +3,12 @@ import { ShoppingCartItemType } from '../../../types/ShoppingCart';
 
 export function createOrderDetails(
   shoppingCart: ShoppingCartItemType[],
-  shippedFrom: string,
   customer: string,
 ): OrderDTO {
   const orderDetails: OrderDetailsInDto[] = [];
   shoppingCart.map((shoppingCartItem) => {
     orderDetails.push({
-      shippedFrom,
+      shippedFrom: shoppingCartItem.location,
       productId: shoppingCartItem.product.id,
       quantity: shoppingCartItem.quantity,
     } as OrderDetailsInDto);

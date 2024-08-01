@@ -19,7 +19,10 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   Tooltip,
   Typography,
   useTheme,
@@ -33,6 +36,7 @@ import {
   NotesRounded,
   PaymentsRounded,
 } from '@mui/icons-material';
+import { LOCATIONS } from '../../../lib/constants';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -45,6 +49,8 @@ export default function ProductDetails() {
   const location = useLocation();
   const { product: productFromState } = location.state || {};
   const { isAdmin } = useAuthContext();
+
+  const [shippedFrom, setShippedFrom] = useState<string>(LOCATIONS[0].id);
 
   const [deleteProduct, { isLoading: isDeleting, isSuccess: isDeleteSuccess }] =
     useDeleteProductMutation();
@@ -107,12 +113,16 @@ export default function ProductDetails() {
 
   const handleAddToCart = () => {
     if (product) {
-      addToShoppingCart(product);
+      addToShoppingCart(product, shippedFrom);
     } else {
       alert(
         'An error occured while trying to add the item to the shopping cart!',
       );
     }
+  };
+
+  const handleLocationChange = (event: SelectChangeEvent<string>) => {
+    setShippedFrom(event.target.value);
   };
 
   if (isFetching) {
@@ -235,6 +245,26 @@ export default function ProductDetails() {
                       </ListItemButton>
                     </ListItem>
                   </Tooltip>
+
+                  <Tooltip title="Location of the product" arrow>
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <NotesRounded />
+                        </ListItemIcon>
+                        <Select
+                          value={shippedFrom}
+                          onChange={handleLocationChange}
+                        >
+                          {LOCATIONS.map((location) => (
+                            <MenuItem value={location.id}>
+                              {location.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </ListItemButton>
+                    </ListItem>
+                  </Tooltip>
                 </List>
               </Paper>
             </Grid>
@@ -248,24 +278,6 @@ export default function ProductDetails() {
           </Grid>
         </div>
       </div>
-
-      {/* <div className={`${styles.detailsSeparated}`}>
-            <div className={`${styles.detailsSeparatedLeft}`}>
-              <p>{`Name: ${product?.name}`}</p>
-              <p>{`Category: ${product?.category.name}`}</p>
-              <p>{`Price: ${product?.price} RON`}</p>
-            </div>
-            <div className={`${styles.detailsSeparatedRight}`}>
-              <img
-                className={styles.detailsImage}
-                src={product?.imageUrl}
-                alt="Image of the product"
-              />
-            </div>
-          </div>
-          <div className={`${styles.description}`}>
-            <p>{`Description: ${product?.description}`}</p>
-          </div> */}
 
       <Dialog open={dialogOpen} onClose={handleClose}>
         <DialogTitle>

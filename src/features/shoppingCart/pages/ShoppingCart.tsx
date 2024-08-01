@@ -22,15 +22,17 @@ import {
 } from '@mui/material';
 import { ClearRounded } from '@mui/icons-material';
 import { toast } from 'react-toastify';
+import { ShoppingCartItemType } from '../../../types/ShoppingCart';
 
 export default function ShoppingCart() {
   const navigate = useNavigate();
   const { authData } = useAuthContext();
-  const [shippedFrom, setShippedFrom] = useState<string>(
-    '485229c8-732e-4b0b-bdea-19c249a70b70',
-  );
-  const { shoppingCart, removeFromShoppingCart, emptyShoppingCart } =
-    useShoppingCartContext();
+  const {
+    shoppingCart,
+    removeFromShoppingCart,
+    emptyShoppingCart,
+    modifyShoppingCartItemLocation,
+  } = useShoppingCartContext();
   const [
     checkout,
     {
@@ -58,12 +60,19 @@ export default function ShoppingCart() {
   };
 
   const handleCheckout = () => {
-    const order = createOrderDetails(shoppingCart, shippedFrom, authData.id);
+    const order = createOrderDetails(shoppingCart, authData.id);
     checkout(order);
   };
 
-  const handleLocationChange = (event: SelectChangeEvent<string>) => {
-    setShippedFrom(event.target.value);
+  const handleLocationChange = (
+    event: SelectChangeEvent<string>,
+    row: ShoppingCartItemType,
+  ) => {
+    modifyShoppingCartItemLocation(
+      row.product,
+      row.location,
+      event.target.value,
+    );
   };
 
   const [page, setPage] = useState<number>(0);
@@ -126,9 +135,9 @@ export default function ShoppingCart() {
                   <TableCell sx={{ fontWeight: 700, fontSize: '1rem' }}>
                     Quantity
                   </TableCell>
-                  {/* <TableCell sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                  <TableCell sx={{ fontWeight: 700, fontSize: '1rem' }}>
                     Location
-                  </TableCell> */}
+                  </TableCell>
                   <TableCell
                     sx={{ fontWeight: 700, fontSize: '1rem' }}
                   ></TableCell>
@@ -146,27 +155,31 @@ export default function ShoppingCart() {
                 ) : (
                   <>
                     {rowsToShow?.map((row) => (
-                      <TableRow key={row.product.id}>
+                      <TableRow key={row.product.id + row.location}>
                         <TableCell>{row.product.category.name}</TableCell>
                         <TableCell>{row.product.name}</TableCell>
                         <TableCell>{row.product.price} RON</TableCell>
                         <TableCell>{row.quantity}</TableCell>
-                        {/* <TableCell>
-                      <Select
-                        value={shippedFrom}
-                        onChange={handleLocationChange}
-                      >
-                        <MenuItem value="485229c8-732e-4b0b-bdea-19c249a70b70">
-                          Vivo Cluj-Napoca
-                        </MenuItem>
-                        <MenuItem value="819056fc-ca67-4cbf-9dd3-f3765d4c8719">
-                          Kaufland Targu Secuiesc
-                        </MenuItem>
-                      </Select>
-                    </TableCell> */}
+                        <TableCell>
+                          <Select
+                            value={row.location}
+                            onChange={(event) =>
+                              handleLocationChange(event, row)
+                            }
+                          >
+                            <MenuItem value="485229c8-732e-4b0b-bdea-19c249a70b70">
+                              Vivo Cluj-Napoca
+                            </MenuItem>
+                            <MenuItem value="819056fc-ca67-4cbf-9dd3-f3765d4c8719">
+                              Kaufland Targu Secuiesc
+                            </MenuItem>
+                          </Select>
+                        </TableCell>
                         <TableCell>
                           <IconButton
-                            onClick={() => removeFromShoppingCart(row.product)}
+                            onClick={() =>
+                              removeFromShoppingCart(row.product, row.location)
+                            }
                           >
                             <ClearRounded />
                           </IconButton>
@@ -188,19 +201,6 @@ export default function ShoppingCart() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-
-        <Select
-          value={shippedFrom}
-          onChange={handleLocationChange}
-          sx={{ width: 'fit-content' }}
-        >
-          <MenuItem value="485229c8-732e-4b0b-bdea-19c249a70b70">
-            Vivo Cluj-Napoca
-          </MenuItem>
-          <MenuItem value="819056fc-ca67-4cbf-9dd3-f3765d4c8719">
-            Kaufland Targu Secuiesc
-          </MenuItem>
-        </Select>
       </div>
     </div>
   );

@@ -6,9 +6,17 @@ import { toast } from 'react-toastify';
 
 type ShoppingCartContextType = {
   shoppingCart: ShoppingCartItemType[];
-  addToShoppingCart: (product: ProductDetailType) => void;
-  removeFromShoppingCart: (product: ProductDetailType) => void;
+  addToShoppingCart: (product: ProductDetailType, location: string) => void;
+  removeFromShoppingCart: (
+    product: ProductDetailType,
+    location: string,
+  ) => void;
   emptyShoppingCart: () => void;
+  modifyShoppingCartItemLocation: (
+    product: ProductDetailType,
+    oldLocation: string,
+    newLocation: string,
+  ) => void;
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContextType);
@@ -20,14 +28,40 @@ type ShoppingCartProviderProps = {
 export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
   const [shoppingCart, setShoppingCart] = useState<ShoppingCartItemType[]>([]);
 
-  const addToShoppingCart = (product: ProductDetailType) => {
+  const modifyShoppingCartItemLocation = (
+    product: ProductDetailType,
+    oldLocation: string,
+    newLocation: string,
+  ) => {
     const tempCart = [...shoppingCart];
-    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
+    const tempCartItem = tempCart.find(
+      (t) => t.product.id === product.id && t.location === oldLocation,
+    );
+    if (tempCartItem) {
+      tempCartItem.location = newLocation;
+      setShoppingCart(tempCart);
+      localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
+      toast.success(
+        `${product.name} Successfully modified the location of the shopping cart item!`,
+      );
+    } else {
+      toast.success(
+        `${product.name} successfully modified the location of the shopping cart item!`,
+      );
+    }
+  };
+
+  const addToShoppingCart = (product: ProductDetailType, location: string) => {
+    const tempCart = [...shoppingCart];
+    const tempCartItem = tempCart.find(
+      (t) => t.product.id === product.id && t.location === location,
+    );
     if (tempCartItem) {
       tempCartItem.quantity += 1;
     } else {
       tempCart.push({
         product,
+        location,
         quantity: 1,
       });
     }
@@ -36,11 +70,16 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     toast.success(`${product.name} successfully added to the shopping cart!`);
   };
 
-  const removeFromShoppingCart = (product: ProductDetailType) => {
+  const removeFromShoppingCart = (
+    product: ProductDetailType,
+    location: string,
+  ) => {
     if (shoppingCart.length === 0) return;
 
     const tempCart = [...shoppingCart];
-    const tempCartItem = tempCart.find((t) => t.product.id === product.id);
+    const tempCartItem = tempCart.find(
+      (t) => t.product.id === product.id && t.location === location,
+    );
     if (tempCartItem) {
       if (tempCartItem.quantity > 1) {
         tempCartItem.quantity -= 1;
@@ -77,6 +116,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       addToShoppingCart,
       removeFromShoppingCart,
       emptyShoppingCart,
+      modifyShoppingCartItemLocation,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [shoppingCart],
