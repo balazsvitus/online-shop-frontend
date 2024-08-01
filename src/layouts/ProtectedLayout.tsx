@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import useAuthContext from '../hooks/useAuthContext';
+import Navbar from '../features/navbar/components/Navbar';
 
 export default function ProtectedLayout() {
   const path = useLocation();
@@ -18,13 +19,14 @@ export default function ProtectedLayout() {
         <>
           {loggedIn ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div className="center-table-container">
+              {/* <div className="center-table-container">
                 <div className="logout-container">
                   <button onClick={handleLogout}>
                     Logout ({authData.username})
                   </button>
                 </div>
-              </div>
+              </div> */}
+              <Navbar />
               <Outlet />
             </div>
           ) : (

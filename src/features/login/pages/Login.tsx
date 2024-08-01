@@ -2,7 +2,6 @@ import styles from '../styles/Login.module.css';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-// import useLogin from '../hooks/useLogin';
 import { passwordSchemaCheck, usernameSchemaCheck } from '../../../lib/schemas';
 import { useLoginUserMutation } from '../api/loginApiSlice';
 import useAuthContext from '../../../hooks/useAuthContext';
@@ -24,7 +23,6 @@ export default function Login() {
     resolver: zodResolver(userSchema),
   });
   const { storeAuthData } = useAuthContext();
-  // const { login, loginLoading } = useLogin();
 
   const [login, { isLoading: loginLoading, data: loginData }] =
     useLoginUserMutation();

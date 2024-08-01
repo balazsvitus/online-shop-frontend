@@ -19,6 +19,16 @@ import {
   useUpdateProductMutation,
 } from '../api/productApiSlice';
 import { useGetProductCategoriesQuery } from '../api/productCategoriesApiSlice';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 const productSchema = z.object({
   name: nameSchemaCheck,
@@ -126,153 +136,121 @@ export default function EditProduct() {
 
   return (
     <div>
-      <div className={`${styles.centerTableContainer}`}>
-        <div className={`${styles.tableContainer}`}>
-          <div className={`${styles.topRow}`}>
-            <h1>Edit product: {product?.name}</h1>
+      <div className="center-table-container">
+        <div className="table-container">
+          <div className="top-row">
+            <Typography variant="h3">Edit product: {product?.name}</Typography>
           </div>
 
-          <form
-            className={styles.gridContainer}
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="name">Name</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <input type="text" id="name" {...register('name')}></input>
-              {errors.name && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  label="Name"
+                  variant="outlined"
+                  {...register('name')}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              </FormControl>
 
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="description">Description</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <textarea
-                id="description"
-                {...register('description')}
-              ></textarea>
-              {errors.description && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  label="Description"
+                  variant="outlined"
+                  {...register('description')}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                />
+              </FormControl>
 
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="price">Price</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <input
-                type="number"
-                id="price"
-                step="1"
-                {...register('price')}
-              ></input>
-              {errors.price && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.price.message}
-                </p>
-              )}
-            </div>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  type="number"
+                  label="Price"
+                  variant="outlined"
+                  {...register('price')}
+                  error={!!errors.price}
+                  helperText={errors.price?.message}
+                />
+              </FormControl>
 
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="weight">Weight</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <input
-                type="number"
-                id="weight"
-                step="1"
-                {...register('weight')}
-              ></input>
-              {errors.weight && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.weight.message}
-                </p>
-              )}
-            </div>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  type="number"
+                  label="Weight"
+                  variant="outlined"
+                  {...register('weight')}
+                  error={!!errors.weight}
+                  helperText={errors.weight?.message}
+                />
+              </FormControl>
 
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="supplier">Supplier</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <input
-                type="text"
-                id="supplier"
-                {...register('supplier')}
-              ></input>
-              {errors.supplier && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.supplier.message}
-                </p>
-              )}
-            </div>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  label="Supplier"
+                  variant="outlined"
+                  {...register('supplier')}
+                  error={!!errors.supplier}
+                  helperText={errors.supplier?.message}
+                />
+              </FormControl>
 
-            <div className={`${styles.gridItem} ${styles.item1}`}>
-              <label htmlFor="imageUrl">Image URL</label>
-            </div>
-            <div className={`${styles.gridItem} ${styles.item2}`}>
-              <input
-                type="text"
-                id="imageUrl"
-                {...register('imageUrl')}
-              ></input>
-              {errors.imageUrl && (
-                <p className={`${styles.errorMessage}`}>
-                  {errors.imageUrl.message}
-                </p>
-              )}
-            </div>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <TextField
+                  label="Image URL"
+                  variant="outlined"
+                  {...register('imageUrl')}
+                  error={!!errors.imageUrl}
+                  helperText={errors.imageUrl?.message}
+                />
+              </FormControl>
 
-            {!isProductCategoriesFetching && productCategories && (
-              <>
-                <div className={`${styles.gridItem} ${styles.item1}`}>
-                  <label htmlFor="category">Category</label>
-                </div>
-                <div className={`${styles.gridItem} ${styles.item2}`}>
-                  <select
-                    id="category"
-                    defaultValue=""
+              {!isProductCategoriesFetching && productCategories && (
+                <FormControl fullWidth margin="normal" variant="outlined">
+                  <Select
+                    displayEmpty
                     {...register('category')}
+                    defaultValue={product.category.id}
+                    error={!!errors.category}
                   >
-                    <option value="" disabled>
-                      Select a category
-                    </option>
                     {productCategories.map((productCategory) => (
-                      <option
+                      <MenuItem
                         value={productCategory.id}
                         key={productCategory.id}
                       >
                         {productCategory.name}
-                      </option>
+                      </MenuItem>
                     ))}
-                  </select>
+                  </Select>
                   {errors.category && (
-                    <p className={`${styles.errorMessage}`}>
+                    <FormHelperText sx={{ color: '#f44336' }}>
                       {errors.category.message}
-                    </p>
+                    </FormHelperText>
                   )}
-                </div>
-              </>
-            )}
+                </FormControl>
+              )}
 
-            <div className={styles.formButtons}>
-              <button
-                className={`${styles.cancelButton} top-row-button`}
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-              <button type="submit" disabled={isUpdating}>
-                Save
-              </button>
-            </div>
-          </form>
+              <div className={styles.formButtons}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ mr: 1 }}
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={isUpdating}
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </Paper>
         </div>
       </div>
     </div>

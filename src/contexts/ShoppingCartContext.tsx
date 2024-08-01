@@ -2,6 +2,7 @@ import { createContext, useEffect, useMemo, useState } from 'react';
 import { ShoppingCartItemType } from '../types/ShoppingCart';
 import { ProductDetailType } from '../types/ProductDetail';
 import { LOCALSTORAGE_CART } from '../lib/constants';
+import { toast } from 'react-toastify';
 
 type ShoppingCartContextType = {
   shoppingCart: ShoppingCartItemType[];
@@ -32,7 +33,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     }
     setShoppingCart(tempCart);
     localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
-    alert(`${product.name} successfully added to the shopping cart!`);
+    toast.success(`${product.name} successfully added to the shopping cart!`);
   };
 
   const removeFromShoppingCart = (product: ProductDetailType) => {
@@ -49,7 +50,9 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       }
       setShoppingCart(tempCart);
       localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
-      alert(`${product.name} successfully removed from the shopping cart!`);
+      toast.success(
+        `${product.name} successfully removed from the shopping cart!`,
+      );
     }
   };
 
