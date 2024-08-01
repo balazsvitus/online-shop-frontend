@@ -76,7 +76,7 @@ export default function Navbar() {
             noWrap
             component="a"
             sx={{
-              mr: 2,
+              mr: 4,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,

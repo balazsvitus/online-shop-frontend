@@ -4,14 +4,10 @@ import Navbar from '../features/navbar/components/Navbar';
 
 export default function ProtectedLayout() {
   const path = useLocation();
-  const { authData, clearAuthData } = useAuthContext();
+  const { authData } = useAuthContext();
 
   const loggedIn = authData.accessToken && authData.accessToken.length > 0;
   const loginPath = path.pathname.startsWith('/login');
-
-  const handleLogout = () => {
-    clearAuthData();
-  };
 
   return (
     <>
@@ -19,13 +15,6 @@ export default function ProtectedLayout() {
         <>
           {loggedIn ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* <div className="center-table-container">
-                <div className="logout-container">
-                  <button onClick={handleLogout}>
-                    Logout ({authData.username})
-                  </button>
-                </div>
-              </div> */}
               <Navbar />
               <Outlet />
             </div>
