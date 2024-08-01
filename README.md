@@ -4,6 +4,6 @@
 
 ## Written in React + NestJS
 
-### Demo:
+### Demo: (For HD 60FPS check the /public folder: demo.mkv)
 
 ![Demo Video](public/demo.gif)
