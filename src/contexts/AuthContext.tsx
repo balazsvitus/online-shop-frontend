@@ -1,8 +1,9 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearAuth, setAuth } from '../api/authSlice';
-import { LOCALSTORAGE_USER } from '../lib/constants';
+import { LOCALSTORAGE_CART, LOCALSTORAGE_USER } from '../lib/constants';
 import { UserType } from '../types/Auth';
+import useShoppingCartContext from '../hooks/useShoppingCartContext';
 
 type AuthContextType = {
   authData: UserType;
@@ -23,6 +24,7 @@ export default function AuthContextProvider({
   const [authData, setAuthData] = useState<UserType>({} as UserType);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const { emptyShoppingCart } = useShoppingCartContext();
 
   const storeAuthData = (data: UserType) => {
     setAuthData(data);
@@ -34,6 +36,7 @@ export default function AuthContextProvider({
   const clearAuthData = () => {
     setAuthData({} as UserType);
     localStorage.removeItem(LOCALSTORAGE_USER);
+    emptyShoppingCart();
     dispatch(clearAuth());
     setIsAdmin(false);
   };

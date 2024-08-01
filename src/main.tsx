@@ -10,11 +10,11 @@ import { store } from './api/store.ts';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <AuthContextProvider>
-        <ShoppingCartProvider>
+      <ShoppingCartProvider>
+        <AuthContextProvider>
           <App />
-        </ShoppingCartProvider>
-      </AuthContextProvider>
+        </AuthContextProvider>
+      </ShoppingCartProvider>
     </Provider>
   </React.StrictMode>,
 );
