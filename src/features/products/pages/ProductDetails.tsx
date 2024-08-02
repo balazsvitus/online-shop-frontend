@@ -30,6 +30,7 @@ import {
 import {
   AbcRounded,
   AddShoppingCartRounded,
+  ArrowBackIosRounded,
   CategoryRounded,
   FactoryRounded,
   FitnessCenterRounded,
@@ -128,11 +129,11 @@ export default function ProductDetails() {
   };
 
   if (isFetching) {
-    return <p>Loading...</p>;
+    return <Typography>Loading...</Typography>;
   }
 
   if (!product) {
-    return <p>The product cannot be found. Redirecting...</p>;
+    return <Typography>The product cannot be found. Redirecting...</Typography>;
   }
 
   return (
@@ -148,7 +149,7 @@ export default function ProductDetails() {
                 sx={{ mr: 1 }}
                 onClick={handleBack}
               >
-                BACK
+                <ArrowBackIosRounded />
               </Button>
               <Button
                 variant="contained"
@@ -210,7 +211,9 @@ export default function ProductDetails() {
                         <ListItemIcon>
                           <PaymentsRounded />
                         </ListItemIcon>
-                        <ListItemText primary={`${product.price} RON`} />
+                        <ListItemText
+                          primary={`${product.price.toLocaleString()} RON`}
+                        />
                       </ListItemButton>
                     </ListItem>
                   </Tooltip>

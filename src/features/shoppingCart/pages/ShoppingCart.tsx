@@ -20,7 +20,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { ClearRounded } from '@mui/icons-material';
+import { ArrowBackIosRounded, ClearRounded } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { ShoppingCartItemType } from '../../../types/ShoppingCart';
 import { LOCATIONS } from '../../../lib/constants';
@@ -109,7 +109,7 @@ export default function ShoppingCart() {
               sx={{ mr: 1 }}
               onClick={handleBack}
             >
-              BACK
+              <ArrowBackIosRounded />
             </Button>
             <Button
               variant="contained"
@@ -161,7 +161,9 @@ export default function ShoppingCart() {
                       <TableRow key={row.product.id + row.location}>
                         <TableCell>{row.product.category.name}</TableCell>
                         <TableCell>{row.product.name}</TableCell>
-                        <TableCell>{row.product.price} RON</TableCell>
+                        <TableCell>
+                          {row.product.price.toLocaleString()} RON
+                        </TableCell>
                         <TableCell>{row.quantity}</TableCell>
                         <TableCell>
                           <Select

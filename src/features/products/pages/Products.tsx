@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
 import {
+  AddRounded,
   ArrowForwardIosRounded,
   ShoppingCartRounded,
 } from '@mui/icons-material';
@@ -62,7 +63,7 @@ export default function Products() {
               disabled={!isAdmin}
               onClick={() => navigate('/add-product')}
             >
-              ADD
+              <AddRounded />
             </Button>
           </div>
         </div>
@@ -93,7 +94,7 @@ export default function Products() {
                     <TableRow key={row.id}>
                       <TableCell>{row.category.name}</TableCell>
                       <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.price} RON</TableCell>
+                      <TableCell>{row.price.toLocaleString()} RON</TableCell>
                       <TableCell>
                         <IconButton
                           onClick={() => navigate(`/products/${row.id}`)}

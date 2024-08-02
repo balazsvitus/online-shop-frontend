@@ -19,6 +19,7 @@ import { CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { darkTheme, lightTheme } from './lib/theme';
 import { ToastContainer } from 'react-toastify';
 import AuthHandler from './components/AuthHandler';
+import CategoryChart from './features/chart/pages/CategoryChart';
 
 function App() {
   const { authLoading } = useAuthContext();
@@ -47,6 +48,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/products" element={<Products />} />
               <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/charts" element={<CategoryChart />} />
               <Route
                 path="/edit-product/:productId"
                 element={<EditProduct />}

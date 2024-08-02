@@ -8,8 +8,8 @@ type LoginType = {
   password: string;
 };
 
-export const productCategoriesApiSlice = createApi({
-  reducerPath: 'productCategoriesApi',
+export const loginApiSlice = createApi({
+  reducerPath: 'loginApi',
   baseQuery: customFetchBaseQuery(),
   endpoints: (builder) => ({
     loginUser: builder.mutation<UserType, LoginType>({
@@ -22,4 +22,4 @@ export const productCategoriesApiSlice = createApi({
   }),
 });
 
-export const { useLoginUserMutation } = productCategoriesApiSlice;
+export const { useLoginUserMutation } = loginApiSlice;

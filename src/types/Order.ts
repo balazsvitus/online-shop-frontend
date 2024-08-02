@@ -13,3 +13,9 @@ export type OrderDTO = {
   streetAddress: string;
   orderDetails: OrderDetailsInDto[];
 };
+
+export type Statistics = {
+  categoryId: string;
+  categoryName: string;
+  salesFigures: number;
+};

@@ -128,11 +128,11 @@ export default function EditProduct() {
   };
 
   if (isFetching) {
-    return <p>Loading...</p>;
+    return <Typography>Loading...</Typography>;
   }
 
   if (!product) {
-    return <p>The product cannot be found. Redirecting...</p>;
+    return <Typography>The product cannot be found. Redirecting...</Typography>;
   }
 
   return (

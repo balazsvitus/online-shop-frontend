@@ -1,4 +1,4 @@
-import { MenuRounded, Storefront } from '@mui/icons-material';
+import { MenuRounded, PersonRounded, Storefront } from '@mui/icons-material';
 import {
   AppBar,
   Badge,
@@ -24,6 +24,10 @@ const pages = [
   {
     name: 'Shopping cart',
     url: '/cart',
+  },
+  {
+    name: 'Category charts',
+    url: '/charts',
   },
 ];
 
@@ -166,6 +170,7 @@ export default function Navbar() {
                   variant="contained"
                   color="secondary"
                 >
+                  <PersonRounded />
                   {authData.username}
                 </Button>
               </Badge>
@@ -175,6 +180,7 @@ export default function Navbar() {
                 variant="contained"
                 color="secondary"
               >
+                <PersonRounded />
                 {authData.username}
               </Button>
             )}
