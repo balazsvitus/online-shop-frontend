@@ -3,6 +3,7 @@ import authReducer from './authSlice';
 import { productApiSlice } from '../features/products/api/productApiSlice';
 import { productCategoriesApiSlice } from '../features/products/api/productCategoriesApiSlice';
 import { orderApiSlice } from '../features/shoppingCart/api/orderApiSlice';
+import authMiddleware from './authMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
       productApiSlice.middleware,
       productCategoriesApiSlice.middleware,
       orderApiSlice.middleware,
+      authMiddleware,
     ),
 });
 

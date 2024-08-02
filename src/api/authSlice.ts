@@ -3,10 +3,12 @@ import { UserType } from '../types/Auth';
 
 type AuthState = {
   authData: UserType | null;
+  isUnauthorized: boolean;
 };
 
 const initialState: AuthState = {
   authData: null,
+  isUnauthorized: false,
 };
 
 const authSlice = createSlice({
@@ -19,8 +21,15 @@ const authSlice = createSlice({
     clearAuth(state) {
       state.authData = null;
     },
+    unauthorized: (state) => {
+      state.isUnauthorized = true;
+    },
+    resetUnauthorized: (state) => {
+      state.isUnauthorized = false;
+    },
   },
 });
 
-export const { setAuth, clearAuth } = authSlice.actions;
+export const { setAuth, clearAuth, unauthorized, resetUnauthorized } =
+  authSlice.actions;
 export default authSlice.reducer;

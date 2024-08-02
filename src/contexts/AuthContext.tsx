@@ -1,7 +1,7 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearAuth, setAuth } from '../api/authSlice';
-import { LOCALSTORAGE_CART, LOCALSTORAGE_USER } from '../lib/constants';
+import { LOCALSTORAGE_USER } from '../lib/constants';
 import { UserType } from '../types/Auth';
 import useShoppingCartContext from '../hooks/useShoppingCartContext';
 

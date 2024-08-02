@@ -18,6 +18,7 @@ import useAuthContext from './hooks/useAuthContext';
 import { CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { darkTheme, lightTheme } from './lib/theme';
 import { ToastContainer } from 'react-toastify';
+import AuthHandler from './components/AuthHandler';
 
 function App() {
   const { authLoading } = useAuthContext();
@@ -36,6 +37,7 @@ function App() {
       <ThemeProvider theme={prefersDarkMode ? darkTheme : lightTheme}>
         <CssBaseline />
         <Router>
+          <AuthHandler />
           <Routes>
             <Route
               path="/"
