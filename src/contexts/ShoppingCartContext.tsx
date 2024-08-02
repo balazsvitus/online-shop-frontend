@@ -38,12 +38,25 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
       (t) => t.product.id === product.id && t.location === oldLocation,
     );
     if (tempCartItem) {
-      tempCartItem.location = newLocation;
-      setShoppingCart(tempCart);
-      localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
-      toast.success(
-        `${product.name} Successfully modified the location of the shopping cart item!`,
+      const alreadyExistsItem = tempCart.find(
+        (t) => t.product.id === product.id && t.location === newLocation,
       );
+      if (alreadyExistsItem) {
+        alreadyExistsItem.quantity += tempCartItem.quantity;
+        tempCart.splice(tempCart.indexOf(tempCartItem), 1);
+        setShoppingCart(tempCart);
+        localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
+        toast.success(
+          `${product.name} Successfully modified the location of the shopping cart item!`,
+        );
+      } else {
+        tempCartItem.location = newLocation;
+        setShoppingCart(tempCart);
+        localStorage.setItem(LOCALSTORAGE_CART, JSON.stringify(tempCart));
+        toast.success(
+          `${product.name} Successfully modified the location of the shopping cart item!`,
+        );
+      }
     } else {
       toast.success(
         `${product.name} successfully modified the location of the shopping cart item!`,
