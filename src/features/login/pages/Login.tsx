@@ -1,9 +1,19 @@
-import styles from '../styles/Login.module.css';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import useLogin from '../hooks/useLogin';
 import { passwordSchemaCheck, usernameSchemaCheck } from '../../../lib/schemas';
+import { useLoginUserMutation } from '../api/loginApiSlice';
+import useAuthContext from '../../../hooks/useAuthContext';
+import { useEffect } from 'react';
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { LockOutlined } from '@mui/icons-material';
 
 const userSchema = z.object({
   username: usernameSchemaCheck,
@@ -20,51 +30,77 @@ export default function Login() {
   } = useForm<UserFormValues>({
     resolver: zodResolver(userSchema),
   });
-  const { login, loginLoading } = useLogin();
+  const { storeAuthData } = useAuthContext();
+
+  const [login, { isLoading: loginLoading, data: loginData }] =
+    useLoginUserMutation();
 
   const onSubmit: SubmitHandler<UserFormValues> = (data) => {
-    login(data.username, data.password);
+    login({ username: data.username, password: data.password });
   };
 
+  useEffect(() => {
+    if (loginData) {
+      storeAuthData(loginData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loginData]);
+
   return (
-    <div className={styles.centerForm}>
-      <form className={styles.loginForm} onSubmit={handleSubmit(onSubmit)}>
-        <h3 className={styles.loginTitle}>Sign in</h3>
-        <div className="horizontal-divider" />
-        <div className={styles.formItem}>
-          <label htmlFor="username">Username</label>
-          <input
-            className={styles.loginInput}
-            type="text"
-            placeholder="Username"
+    <Container component="main" maxWidth="xs" sx={{ mt: 20 }}>
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <LockOutlined />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
+          <TextField
+            margin="normal"
+            required
+            fullWidth
             id="username"
+            label="Username"
+            autoFocus
+            error={!!errors.username}
+            helperText={errors.username?.message}
             {...register('username')}
           />
-          {errors.username && (
-            <p className={styles.errorMessage}>{errors.username.message}</p>
-          )}
-        </div>
-        <div className={styles.formItem}>
-          <label htmlFor="password">Password</label>
-          <input
-            className={styles.loginInput}
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Password"
             type="password"
-            placeholder="Password"
             id="password"
+            error={!!errors.password}
+            helperText={errors.password?.message}
             {...register('password')}
           />
-          {errors.password && (
-            <p className={styles.errorMessage}>{errors.password.message}</p>
-          )}
-        </div>
-        <button
-          className={styles.loginButton}
-          type="submit"
-          disabled={loginLoading}
-        >
-          Login
-        </button>
-      </form>
-    </div>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loginLoading}
+          >
+            Sign In
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 }

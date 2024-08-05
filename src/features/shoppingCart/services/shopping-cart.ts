@@ -3,18 +3,18 @@ import { ShoppingCartItemType } from '../../../types/ShoppingCart';
 
 export function createOrderDetails(
   shoppingCart: ShoppingCartItemType[],
-  shippedFrom: string,
+  customer: string,
 ): OrderDTO {
   const orderDetails: OrderDetailsInDto[] = [];
   shoppingCart.map((shoppingCartItem) => {
     orderDetails.push({
-      shippedFrom,
+      shippedFrom: shoppingCartItem.location,
       productId: shoppingCartItem.product.id,
       quantity: shoppingCartItem.quantity,
     } as OrderDetailsInDto);
   });
   const order = {
-    customer: '33c5965f-e370-43af-8d9a-c877463f31b1',
+    customer,
     createdAt: new Date(),
     country: 'Romania',
     city: 'Cluj-Napoca',

@@ -1,4 +1,4 @@
-table, td, th {
+/* table, td, th {
   border: 1px solid black;
 }
 
@@ -8,9 +8,9 @@ td, th {
 
 table {
   border-spacing: 0px;
-}
+} */
 
-button {
+/* button {
   cursor: pointer;
   border-radius: 10px;
   border: 1px solid white;
@@ -24,7 +24,7 @@ button {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
+} */
 
 .top-row-button {
   margin-right: 5px;
@@ -51,6 +51,7 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 5px;
 }
 
 .horizontal-divider {
